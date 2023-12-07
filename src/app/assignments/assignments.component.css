@@ -1,0 +1,64 @@
+.rendu {
+    color: green;
+}
+
+.nonRendu {
+    color: red;
+}
+
+.mat-divider {
+    border-top-color: red;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.ajouterBtn {
+    align-self: flex-end;
+}
+
+/* Style général pour le conteneur de pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    /* Ajustez pour aligner à droite */
+    align-items: center;
+    margin: 20px 0;
+    /* Ajustez selon l'espacement désiré */
+}
+
+/* Style pour les boutons de première/dernière page pour qu'ils ressemblent à ceux de mat-paginator */
+.mat-icon-button {
+    border: none;
+    background-color: transparent;
+}
+
+/* Style pour les icônes des boutons de première/dernière page */
+.mat-icon-button .mat-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+/* Style pour les boutons désactivés */
+.mat-icon-button[disabled] {
+    color: rgba(0, 0, 0, 0.26);
+}
+
+/* Style pour le mat-paginator */
+.mat-paginator {
+    background-color: transparent;
+    /* Enlève le fond par défaut si nécessaire */
+}
+
+/* Style pour la partie range actions du mat-paginator */
+.mat-paginator-range-actions {
+    align-items: center;
+    /* Centre verticalement le texte et les contrôles */
+}
+
+/* Style pour la partie range label du mat-paginator */
+.mat-paginator-range-label {
+    margin: 0 8px;
+    /* Ajustez l'espacement autour du texte de la plage */
+}

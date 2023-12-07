@@ -1,0 +1,72 @@
+import { Component, /*Input*/ OnInit, Output, EventEmitter } from '@angular/core';
+import { Assignment } from '../assignment.model';
+import { AssignmentsService } from 'src/app/shared/assignments.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/shared/auth.service';
+
+@Component({
+  selector: 'app-assigment-detail',
+  templateUrl: './assigment-detail.component.html',
+  styleUrls: ['./assigment-detail.component.css']
+})
+
+export class AssigmentDetailComponent implements OnInit {
+    /*@Input()*/ assignmentTransmis!: Assignment | null;
+  @Output() deleteAssignment: EventEmitter<Assignment> = new EventEmitter();
+
+  constructor(private assignmentsService: AssignmentsService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService) { }
+
+  ngOnInit(): void {
+    this.getAssignment();
+    console.log("Query Params : ");
+    console.log(this.route.snapshot.queryParams);
+    console.log("Fragment : ");
+    console.log(this.route.snapshot.fragment);
+  }
+
+  onAssignmentRendu() {
+    if (this.assignmentTransmis) {
+      this.assignmentTransmis.rendu = true;
+    }
+
+    this.assignmentsService.updateAssignment(this.assignmentTransmis!)
+      .subscribe(message => {
+        console.log(message);
+      this.router.navigate(['/home']); //ici pour ne pas risquer d'afficher la page avant que les données soient modifiées
+      });
+      //this.router.navigate(['/home']);
+  }
+
+  onAssignmentDelete() {
+    this.assignmentsService.deleteAssignment(this.assignmentTransmis!)
+      .subscribe(message => {
+        console.log(message);
+        this.router.navigate(['/home']);
+      });
+
+    //this.router.navigate(['/home']);
+  }
+
+  onClickEdit() {
+    this.router.navigate(['/assignment', this.assignmentTransmis?.id, 'edit'],
+      { queryParams: { nom: this.assignmentTransmis?.nom }, fragment: 'edition' });
+  }
+
+  getAssignment() {
+    // on recupere l'id dans le snapshot passe par le routeur
+    // le "+" force la conversion de l'id de type string en "number"
+    const id = +this.route.snapshot.params['id'];
+    this.assignmentsService.getAssignment(id)
+      .subscribe(assignment => {
+        this.assignmentTransmis = assignment || null;
+      });
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdminSync();
+  }
+}
+

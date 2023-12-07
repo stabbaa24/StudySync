@@ -1,0 +1,64 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <button mat-raised-button (click)="drawer.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <button mat-icon-button>
+      <mat-icon>house</mat-icon>
+    </button>
+    
+    <span>Gestion des devoirs</span>
+    <span class="example-spacer"></span>
+
+    <button mat-icon-button title="Se Connecter" (click)="onLogginForm()">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <p *ngIf="authService.loggedIn">Bienvenue {{ username }}</p>
+    
+    <button *ngIf="authService.loggedIn" mat-icon-button title="Se Déconnecter" (click)="onLogOut()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<h1>
+  <nav>
+    <a routerLink="/home">
+      {{ title }}
+    </a>
+  </nav>
+</h1>
+
+
+<mat-drawer-container class="my-sidenav">
+  <mat-drawer #drawer mode="push">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/assignments" routerLinkActive="active-link">
+        <span>Liste des devoirs</span>
+      </a>
+      <a mat-list-item routerLink="/students" routerLinkActive="active-link">
+        <span>Ajout d'un devoir</span>
+      </a>
+      <a mat-list-item routerLink="/teachers" routerLinkActive="active-link">
+        <span>Modification d'un devoir</span>
+      </a>
+      <a mat-list-item routerLink="/login" routerLinkActive="active-link">
+        
+        <span>Suppression d'un devoir</span>
+      </a>
+      <a mat-list-item routerLink="/login" routerLinkActive="active-link">
+        
+        <span>Génération de données de test</span>
+      </a>
+    </mat-nav-list>
+  </mat-drawer>
+ 
+  <!-- Ajouter dans le composant principal app.component, un bouton "PeuplerBD" qui appelle la
+méthode précédente du service. -->
+    <!--<button mat-raised-button (click)="onPeuplerBD()">Peupler BD</button>-->
+ <!-- <app-assignments></app-assignments>-->
+ <router-outlet></router-outlet>
+
+</mat-drawer-container>
+

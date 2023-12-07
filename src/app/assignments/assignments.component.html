@@ -1,0 +1,50 @@
+<main class="container">
+
+  <!--Creer les boutons de pagination-->
+  <div class="pagination">
+    <button title="First Page" mat-icon-button [disabled]="!hasPrevPage" (click)="onFirstPage()">
+      <mat-icon>first_page</mat-icon>
+    </button>
+    <mat-paginator 
+      [length]="totalDocs" 
+      [pageSize]="limit" 
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      (page)="onPaginateChange($event)">
+    </mat-paginator>
+
+    <button title="Last Page" mat-icon-button [disabled]="!hasNextPage" (click)="onLastPage()">
+      <mat-icon>last_page</mat-icon>
+    </button>
+  </div>
+
+  <div class="ajouterBtn">
+    <a routerLink="/add">
+      <button class="ajouterBtn" mat-flat-button color="accent">
+        Ajouter Assignment
+      </button>
+    </a>
+  </div>
+
+  <mat-list *ngFor="let assignment of assignments">
+    <nav>
+      <a routerLink="/assignment/{{assignment.id}}">
+        <h3 mat-subheader>{{assignment.dateDeRendu | date: 'dd/MM/yyyy'}}</h3>
+        <mat-list-item (click)="assignmentClique(assignment)">
+          <p appRendu *ngIf="assignment.rendu; else nonsoumis">
+            Devoir intitulé {{assignment.nom}}, rendu le
+            {{assignment.dateDeRendu | date: 'dd/MM/yyyy'}}.
+          </p>
+          <ng-template #nonsoumis>
+            Le devoir {{assignment.nom}} à rendre le {{assignment.dateDeRendu | date: 'dd/MM/yyyy'}} n'a pas été rendu.
+          </ng-template>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </a>
+    </nav>
+  </mat-list>
+
+  <!--<app-assigment-detail [assignmentTransmis]="assignmentSelectionne" (deleteAssignment)="onDeleteAssignment($event)">
+    </app-assigment-detail>-->
+</main>
+
+<!--<app-add-assignment (nouvelAssignment)="onNouvelAssignment($event)" *ngIf="formVisible"></app-add-assignment>-->

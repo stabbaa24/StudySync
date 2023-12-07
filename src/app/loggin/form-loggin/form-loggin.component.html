@@ -1,0 +1,36 @@
+<mat-card>
+    <h2>Connexion</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <p>
+            <mat-form-field appearance="outline">
+            <mat-label>Nom d'utilisateur</mat-label>
+            <input matInput formControlName="username" placeholder="Nom d'utilisateur" required>
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-hint>Entrez votre nom d'utilisateur</mat-hint>
+            <mat-error *ngIf="getUsername?.invalid && (getUsername?.dirty || getUsername?.touched)">
+                Le nom d'utilisateur est requis
+            </mat-error>
+            </mat-form-field>
+        </p>
+  
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Mot de passe</mat-label>
+                <input matInput formControlName="password" placeholder="Votre mot de passe" type="password" required>
+                <mat-icon matSuffix>lock</mat-icon>
+                <mat-hint>Entrez votre mot de passe</mat-hint>
+                <mat-error *ngIf="getPassword?.errors?.['required'] && (getPassword?.dirty || getPassword?.touched)">
+                    Le mot de passe est requis
+                </mat-error>
+            </mat-form-field>
+        </p>
+        <div *ngIf="isLogFailed" class="error-message">
+            <span style="color: red;">{{ getErrorLoggin }}</span>
+        </div>
+        <div class="button">
+            <button mat-button type="button" (click)="loginForm.reset()">Réinitialiser</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Se connecter</button>
+        </div>
+    </form>
+  </mat-card>
+  
