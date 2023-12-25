@@ -24,6 +24,9 @@
                 </mat-error>
             </mat-form-field>
         </p>
+        <p>
+           Pas encore inscrit ? <a routerLink="/register">S'inscrire</a>
+        </p>
         <div *ngIf="isLogFailed" class="error-message">
             <span style="color: red;">{{ getErrorLoggin }}</span>
         </div>

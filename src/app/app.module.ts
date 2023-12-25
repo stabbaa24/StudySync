@@ -35,6 +35,9 @@ import { HttpClientModule } from '@angular/common/http';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { HomeComponent } from './home/home.component';
 import { LoadComponent } from './load/load.component';
+import { RegisterComponent } from './loggin/register/register.component';
+
+import {MatRadioModule} from '@angular/material/radio';
 
 const routes: Routes = [
   //{ path: 'load', component: LoadComponent },
@@ -48,7 +51,8 @@ const routes: Routes = [
     component: EditAssignmentComponent,
     canActivate: [authGuard]
   },
-  { path: 'loggin', component: FormLogginComponent }
+  { path: 'loggin', component: FormLogginComponent },
+  { path: 'register', component: RegisterComponent }
 ];
 
 @NgModule({
@@ -61,7 +65,8 @@ const routes: Routes = [
     EditAssignmentComponent,
     FormLogginComponent,
     HomeComponent,
-    LoadComponent
+    LoadComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +89,8 @@ const routes: Routes = [
     MatSlideToggleModule,
     ReactiveFormsModule,
     HttpClientModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatRadioModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Users } from '../loggin/loggin.model';
 import { UsersService } from './users.service';
-import { switchMap, tap, throwError } from 'rxjs';
+import { of, switchMap, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,22 +20,26 @@ export class AuthService {
 
   logIn(login: string, password: string) {
     return this.usersService.logInUser({ login, password }).pipe(
-      switchMap((userResponse: any) => { // permet de vérifier si l'utilisateur est bien connecté
-        if (userResponse && userResponse.message) {
+      switchMap((userResponse: any) => {
+        // Check if authentication is true rather than if there's a message
+        if (userResponse.auth) {
           this.loggedIn = true;
-          return this.logRole(login, password); // permet de récupérer le rôle de l'utilisateur
+          // No need to fetch the role again if you can include it in the login response
+          // return this.logRole(login, password);
+          this.getUserRole = userResponse.role; // If role is included in login response
+          return of(userResponse); // Import `of` from 'rxjs'
         } else {
           this.loggedIn = false;
           return throwError(() => new Error('Login failed'));
         }
       }),
-
-      tap((roleResponse: any) => { // permet de récupérer le rôle de l'utilisateur
-        this.getUsers = { login, password, role: roleResponse.role };
+      tap((userResponse: any) => {
+        // Assuming role comes with the login response
+        this.getUsers = { login, password, role: userResponse.role };
       })
     );
   }
-
+  
   logOut() {
     this.loggedIn = false;
     this.getUsers = null;
@@ -49,4 +53,9 @@ export class AuthService {
     console.log("L'utilisateur est il admin (auth.service) ? :" + this.getUsers?.role);
     return this.loggedIn && this.getUsers?.role === 'admin';
   }
+
+  register(login: string, password: string, role: string) {
+    return this.usersService.registerUser({ login, password, role });
+}
+
 }

@@ -14,16 +14,15 @@ export class UsersService {
 
     url = "http://localhost:8010/api/users";
 
-    logInUser(users: { login: string, password: string }): Observable<any> {
-        return this.http.post<any>(this.url + '/login', users);
+    registerUser(users: { login: string, password: string, role: string }): Observable<any> {
+        return this.http.post<any>(this.url + '/register', users);
     }
 
-    getUsers(): Observable<Users[]> {
-        return this.http.get<Users[]>(this.url);
+    logInUser(users: { login: string, password: string }): Observable<any> {
+        return this.http.post<any>(this.url + '/login', users);
     }
 
     getRole(users: { login: string, password: string }): Observable<any> {
         return this.http.post<any>(this.url + '/role', users);
     }
-    
 }
