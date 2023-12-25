@@ -33,9 +33,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { HttpClientModule } from '@angular/common/http';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import { HomeComponent } from './home/home.component';
+import { LoadComponent } from './load/load.component';
 
 const routes: Routes = [
-  { path: '', component: AssignmentsComponent },
+  //{ path: 'load', component: LoadComponent },
+  { path: '', component: HomeComponent },
+  //{ path: '', component: AssignmentsComponent }, // path vide = page d'accueil
   { path: 'home', component: AssignmentsComponent },
   { path: 'add', component: AddAssignmentComponent },
   { path: 'assignment/:id', component: AssigmentDetailComponent},
@@ -55,7 +59,9 @@ const routes: Routes = [
     AssigmentDetailComponent,
     AddAssignmentComponent,
     EditAssignmentComponent,
-    FormLogginComponent
+    FormLogginComponent,
+    HomeComponent,
+    LoadComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,20 @@
+.float {
+    animation: float 7s ease-in-out infinite;
+    margin: auto;
+    height: auto;
+    width: auto;
+    display: block;
+    position: relative;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-50px);
+    }
+}

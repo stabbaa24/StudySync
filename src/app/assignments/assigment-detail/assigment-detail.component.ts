@@ -66,7 +66,8 @@ export class AssigmentDetailComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.authService.isAdminSync();
+    console.log("L'utilisateur est il admin (detail check component) ? :" + this.authService.isAdmin());
+    return this.authService.isAdmin();
   }
 }
 

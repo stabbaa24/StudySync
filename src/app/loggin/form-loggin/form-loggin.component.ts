@@ -20,22 +20,26 @@ export class FormLogginComponent {
   getErrorLoggin = 'Nom d\'utilisateur ou mot de passe incorrect.';
 
   ngOnInit(): void {
-
+    console.log(this.loginForm);
   }
 
   onLogin() {
     if (this.loginForm.valid) {
-      const username = this.loginForm.value.username;
-      const password = this.loginForm.value.password;
-      if (this.authService.logIn(username || '', password || '')) {
-        this.router.navigate(['/home']);
-      } else {
-        this.isLogFailed = true;
-      }
+      const username = this.loginForm.value.username ?? '';
+      const password = this.loginForm.value.password ?? '';
+
+      this.authService.logIn(username, password).subscribe({
+        next: () => {
+          this.router.navigate(['/home']);
+        },
+        error: (error) => {
+          console.error(error);
+          this.isLogFailed = true;
+        }
+      });
     }
   }
 
   get getUsername() { return this.loginForm.get('username'); }
   get getPassword() { return this.loginForm.get('password'); }
-
 }

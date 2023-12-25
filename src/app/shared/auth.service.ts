@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Users } from '../loggin/loggin.model';
+import { UsersService } from './users.service';
+import { switchMap, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,21 +10,30 @@ import { Users } from '../loggin/loggin.model';
 export class AuthService {
   loggedIn = false;
   getUsers: Users | null = null;
-  
-  users: Users[] = [
-    { login: 'user1', password: 'pass1', role: 'user' },
-    { login: 'user2', password: 'pass2', role: 'user' },
-    { login: 'user3', password: 'pass3', role: 'admin' }
-  ];
+  getUserRole: any | null = null;
 
-  logIn(login: string, password: string): boolean {
-    const user = this.users.find(u => u.login === login && u.password === password);
-    if (user) {
-      this.getUsers = user;
-      this.loggedIn = true;
-      return true;
-    }
-    return false;
+  constructor(private usersService: UsersService) { }
+
+  logRole(login: string, password: string) {
+    return this.usersService.getRole({ login, password });
+  }
+
+  logIn(login: string, password: string) {
+    return this.usersService.logInUser({ login, password }).pipe(
+      switchMap((userResponse: any) => { // permet de vérifier si l'utilisateur est bien connecté
+        if (userResponse && userResponse.message) {
+          this.loggedIn = true;
+          return this.logRole(login, password); // permet de récupérer le rôle de l'utilisateur
+        } else {
+          this.loggedIn = false;
+          return throwError(() => new Error('Login failed'));
+        }
+      }),
+
+      tap((roleResponse: any) => { // permet de récupérer le rôle de l'utilisateur
+        this.getUsers = { login, password, role: roleResponse.role };
+      })
+    );
   }
 
   logOut() {
@@ -30,18 +41,12 @@ export class AuthService {
     this.getUsers = null;
   }
 
-  isLog(): Promise<boolean> {
-    return Promise.resolve(this.loggedIn);
+  isLog(): boolean {
+    return this.loggedIn;
   }
 
-  isAdmin(): Promise<boolean> {
-    return this.isLog().then(isLoggedIn => {
-      return isLoggedIn && this.getUsers?.role === 'admin';
-    });
+  isAdmin(): boolean {
+    console.log("L'utilisateur est il admin (auth.service) ? :" + this.getUsers?.role);
+    return this.loggedIn && this.getUsers?.role === 'admin';
   }
-
-  isAdminSync(): boolean {
-      return this.loggedIn && this.getUsers?.role === 'admin';
-  }
-  constructor() { }
 }

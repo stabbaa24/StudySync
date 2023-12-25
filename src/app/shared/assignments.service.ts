@@ -10,26 +10,6 @@ import { bdInitialAssignments } from './data';
 })
 
 export class AssignmentsService {
-  assignments: Assignment[] = [
-    {
-      id: 1,
-      nom: 'Devoir Angular de Buffa',
-      dateDeRendu: new Date('2023-09-30'),
-      rendu: false,
-    },
-    {
-      id: 2,
-      nom: 'Devoir SQL de Mopolo',
-      dateDeRendu: new Date('2023-10-30'),
-      rendu: false,
-    },
-    {
-      id: 3,
-      nom: 'Devoir gestion de Tunsi',
-      dateDeRendu: new Date('2023-08-30'),
-      rendu: true,
-    }
-  ];
 
   constructor(private loggingService: LoggingService,
     private http: HttpClient) { }
