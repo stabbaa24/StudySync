@@ -31,13 +31,15 @@ import { authGuard } from './shared/auth.guard';
 import { FormLogginComponent } from './loggin/form-loggin/form-loggin.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { HomeComponent } from './home/home.component';
 import { LoadComponent } from './load/load.component';
 import { RegisterComponent } from './loggin/register/register.component';
 
 import {MatRadioModule} from '@angular/material/radio';
+import { AuthInterceptor } from './shared/auth.interceptor';
+
 
 const routes: Routes = [
   //{ path: 'load', component: LoadComponent },
@@ -92,7 +94,13 @@ const routes: Routes = [
     MatPaginatorModule,
     MatRadioModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
