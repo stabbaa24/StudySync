@@ -33,6 +33,8 @@ export class RegisterComponent {
   getErrorRegister = 'Nom d\'utilisateur ou mot de passe incorrect.';
   getErrorRegisterUsername = 'Nom d\'utilisateur déjà utilisé.';
   file: File | null = null;
+  selectedFileName: string | undefined;
+  imgFolder = 'src/assets/uploads/';
 
   ngOnInit(): void {
     console.log(this.registerForm);
@@ -50,61 +52,83 @@ export class RegisterComponent {
     }
 
     onRegister() {
-      if (this.registerForm.valid) {
+      if (!this.registerForm.valid) {
+          this.isRegisterFailed = true;
+          this.getErrorRegister = 'Formulaire non valide.';
+          return;
+      }
+    
       const role = this.registerForm.value.role ?? 'user';
       const username = this.registerForm.value.username ?? '';
       const password = this.registerForm.value.password ?? '';
       const confirmPassword = this.registerForm.value.confirmPassword ?? '';
-
-      if (password === confirmPassword) {
+      if (password !== confirmPassword) {
+          this.isRegisterFailed = true;
+          this.getErrorRegister = 'Les mots de passe ne correspondent pas.';
+          return;
+      }
+    
+      const performRegistration = () => {
+        console.log('selectedFileName : ', this.selectedFileName);
+        const additionalData = {
+            nom: this.registerForm.value.lastname,
+            prenom: this.registerForm.value.firstname,
+            image: this.imgFolder + this.selectedFileName,
+            promo: role === 'user' ? this.registerForm.value.promo : undefined,
+            groupe: role === 'user' ? this.registerForm.value.groupe : undefined,
+            idUser: '' // Cet ID sera obtenu après l'inscription
+        };
+        console.log('additionalData : ', additionalData);
         this.authService.register(username, password, role).subscribe({
-          next: (userResponse) => {
-            const additionalData = {
-              nom: this.registerForm.value.lastname,
-              prenom: this.registerForm.value.firstname,
-              image: this.file,
-              promo: role === 'user' ? this.registerForm.value.promo : undefined,
-              groupe: role === 'user' ? this.registerForm.value.groupe : undefined,
-              idUser: userResponse.id
-            };
-
-            if (role === 'user') {
-              this.studentService.addStudent(additionalData).subscribe({
-                next: () => this.router.navigate(['/loggin']),
-                error: (error) => {
-                  console.error(error);
-                  this.isRegisterFailed = true;
-                }
-              });
-            } else {
-              this.teacherService.addTeacher(additionalData).subscribe({
-                next: () => this.router.navigate(['/loggin']),
-                error: (error) => {
-                  console.error(error);
-                  this.isRegisterFailed = true;
-                }
-              });
+            next: (userResponse) => {
+                additionalData.idUser = userResponse.id;
+                const registerObservable = role === 'user' ? this.studentService.addStudent(additionalData) : this.teacherService.addTeacher(additionalData);
+    
+                registerObservable.subscribe({
+                    next: () => this.router.navigate(['/loggin']),
+                    error: (error) => {
+                        console.error('Erreur lors de l\'inscription : ', error);
+                        this.isRegisterFailed = true;
+                    }
+                });
+            },
+            error: (error) => {
+                console.error('Erreur lors de l\'inscription : ', error);
+                this.isRegisterFailed = true;
             }
-          },
-          error: (error) => {
-            console.error(error);
-            this.isRegisterFailed = true;
-          }
         });
+      };
+    
+      // Upload de l'image si elle existe, sinon appel de performRegistration avec un chemin vide
+      if (this.file) {
+          const uploadObservable = role === 'user' ? this.studentService.uploadImage(this.file) : this.teacherService.uploadImage(this.file);
+    
+          uploadObservable.subscribe({
+              next: (imageResponse) => {
+                const imagePath = 'src/assets/uploads/' + imageResponse.fileName; // Supposant que la réponse contient le nom du fichier
+                performRegistration();
+              },
+              error: (error) => {
+                  console.error('Erreur lors de l\'upload de l\'image : ', error);
+                  this.isRegisterFailed = true;
+              }
+          });
       } else {
-        this.isRegisterFailed = true;
-        this.getErrorRegister = 'Les mots de passe ne correspondent pas.';
+          performRegistration(); // Pas d'image à uploader, donc chemin vide
       }
     }
-  }
+    
+  
 
 
-  onFileSelected(event: any) {
-    this.file = event.target.files[0];
-    if (this.file) {
-     this.registerForm.get('image')?.setValue(this.file.name);
+    onFileSelected(event: any) {
+      this.file = event.target.files[0];
+      if (this.file) {
+        this.selectedFileName = this.file.name; // Stockez le nom du fichier sélectionné
+        this.registerForm.get('image')?.setValue(this.file.name);
+      }
     }
-  }
+    
 
   get getUsername() { return this.registerForm.get('username'); }
   get getPassword() { return this.registerForm.get('password'); }

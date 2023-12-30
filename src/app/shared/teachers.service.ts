@@ -20,4 +20,11 @@ export class TeachersService {
     addTeacher(data: any): Observable<any> {
         return this.http.post<any>(this.url, data);
     }
+
+    uploadImage(file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('image', file, file.name);
+        return this.http.post('http://localhost:8010/api/teachers/uploads', formData);
+    }
+    
 }
