@@ -1,0 +1,23 @@
+import { Injectable } from '@angular/core';
+import { Observable} from 'rxjs';
+import { LoggingService } from './logging.service';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+    providedIn: 'root'
+})
+
+export class StudentsService {
+    constructor(private loggingService: LoggingService,
+        private http: HttpClient) { }
+
+    url = "http://localhost:8010/api/students";
+
+    getStudents(): Observable<any> {
+        return this.http.get<any>(this.url);
+    }
+
+    addStudent(data: any): Observable<any> {
+        return this.http.post<any>(this.url, data);
+    } 
+}

@@ -20,6 +20,39 @@
         </p>
         <p>
             <mat-form-field appearance="outline">
+                <mat-label>Nom de famille</mat-label>
+                <input matInput formControlName="lastname" placeholder="Nom de famille">
+                <mat-error *ngIf="getLastName?.invalid && (getLastName?.dirty || getLastName?.touched)">
+                    Le nom de famille est requis
+                </mat-error>
+            </mat-form-field>
+        </p>
+        
+        <p>
+            <mat-form-field appearance="outline">
+                <mat-label>Prénom</mat-label>
+                <input matInput formControlName="firstname" placeholder="Prénom">
+                <mat-error *ngIf="getFirstName?.invalid && (getFirstName?.dirty || getFirstName?.touched)">
+                    Le prénom est requis
+                </mat-error>
+            </mat-form-field>
+        </p>
+        <p *ngIf="registerForm.value.role === 'user'">
+            <mat-form-field appearance="outline">
+                <mat-label>Promo</mat-label>
+                <input matInput formControlName="promo" placeholder="Promotion">
+            </mat-form-field>
+        
+            <mat-form-field appearance="outline">
+                <mat-label>Groupe de TD</mat-label>
+                <input matInput formControlName="groupe" placeholder="Groupe de TD">
+            </mat-form-field>
+        </p>
+        <p>
+            <input type="file" name="image" (change)="onFileSelected($event)" />
+        </p>
+        <p>
+            <mat-form-field appearance="outline">
                 <mat-label>Mot de passe</mat-label>
                 <input matInput formControlName="password" placeholder="Votre mot de passe" type="password" required>
                 <mat-icon matSuffix>lock</mat-icon>

@@ -31,8 +31,8 @@ export class AuthService {
           console.log("token : " + this.token);
 
           return of(userResponse);
-        } 
-        
+        }
+
         else {
           this.loggedIn = false;
           return throwError(() => new Error('Login failed'));
@@ -58,9 +58,14 @@ export class AuthService {
     return this.loggedIn && this.getUsers?.role === 'admin';
   }
 
-  register(login: string, password: string, role: string) {
+  /*register(login: string, password: string, role: string) {
     return this.usersService.registerUser({ login, password, role });
+  }*/
+  // auth.service.ts
+  register(username: string, password: string, role: string) {
+    return this.usersService.registerUser({ login: username, password, role });
   }
+
 
   getToken() {
     return this.token;

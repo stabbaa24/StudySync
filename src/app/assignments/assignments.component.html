@@ -31,11 +31,11 @@
         <h3 mat-subheader>{{assignment.dateDeRendu | date: 'dd/MM/yyyy'}}</h3>
         <mat-list-item (click)="assignmentClique(assignment)">
           <p appRendu *ngIf="assignment.rendu; else nonsoumis">
-            Devoir intitulé {{assignment.nom}}, rendu le
+            Devoir intitulé <!--{{assignment.nom}}-->, rendu le
             {{assignment.dateDeRendu | date: 'dd/MM/yyyy'}}.
           </p>
           <ng-template #nonsoumis>
-            Le devoir {{assignment.nom}} à rendre le {{assignment.dateDeRendu | date: 'dd/MM/yyyy'}} n'a pas été rendu.
+            Le  <!--{{assignment.nom}} --> à rendre le {{assignment.dateDeRendu | date: 'dd/MM/yyyy'}} n'a pas été rendu.
           </ng-template>
         </mat-list-item>
         <mat-divider></mat-divider>

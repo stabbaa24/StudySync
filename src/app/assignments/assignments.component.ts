@@ -68,7 +68,7 @@ export class AssignmentsComponent implements OnInit {
   }
 
   assignmentClique(assignment: Assignment) {
-    console.log("Assignment cliqué : " + assignment.nom);
+    //console.log("Assignment cliqué : " + assignment.nom);
     this.assignmentSelectionne = assignment;
   }
 

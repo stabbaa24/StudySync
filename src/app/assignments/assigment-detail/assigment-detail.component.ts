@@ -52,7 +52,7 @@ export class AssigmentDetailComponent implements OnInit {
 
   onClickEdit() {
     this.router.navigate(['/assignment', this.assignmentTransmis?.id, 'edit'],
-      { queryParams: { nom: this.assignmentTransmis?.nom }, fragment: 'edition' });
+      { queryParams: { /*nom: this.assignmentTransmis?.nom*/ }, fragment: 'edition' });
   }
 
   getAssignment() {

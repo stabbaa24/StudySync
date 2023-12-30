@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable} from 'rxjs';
 import { LoggingService } from './logging.service';
 import { HttpClient } from '@angular/common/http';
-import { Users } from '../loggin/loggin.model';
 
 @Injectable({
     providedIn: 'root'
