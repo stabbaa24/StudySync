@@ -39,6 +39,7 @@ import { RegisterComponent } from './loggin/register/register.component';
 
 import {MatRadioModule} from '@angular/material/radio';
 import { AuthInterceptor } from './shared/auth.interceptor';
+import { SubjectsComponent } from './subjects/subjects.component';
 
 
 const routes: Routes = [
@@ -54,7 +55,8 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   { path: 'loggin', component: FormLogginComponent },
-  { path: 'register', component: RegisterComponent }
+  { path: 'register', component: RegisterComponent },
+  { path: 'subjects', component: SubjectsComponent }
 ];
 
 @NgModule({
@@ -68,7 +70,8 @@ const routes: Routes = [
     FormLogginComponent,
     HomeComponent,
     LoadComponent,
-    RegisterComponent
+    RegisterComponent,
+    SubjectsComponent
   ],
   imports: [
     BrowserModule,
