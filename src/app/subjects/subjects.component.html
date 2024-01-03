@@ -1,37 +1,30 @@
-<mat-card>
-    <h2>Ajout de Matière</h2>
-    <form [formGroup]="subjectForm" (ngSubmit)="onAddSubject()">
-      <p>
-        <mat-form-field appearance="outline">
-          <mat-label>Nom de la matière</mat-label>
-          <input matInput formControlName="matiere" placeholder="Nom de la matière" required>
-          <mat-error *ngIf="getMatiere?.invalid && (getMatiere?.dirty || getMatiere?.touched)">
-            Le nom de la matière est requis
-          </mat-error>
-        </mat-form-field>
-      </p>
+<main class="container">
+  <!-- Pagination -->
+  <div class="pagination">
+    <!-- ... Boutons de pagination ... -->
+  </div>
+
+  <div class="ajouterBtn">
+    <a routerLink="/addSubject">
+      <button class="ajouterBtn" mat-flat-button color="accent">
+        Ajouter Matière
+      </button>
+    </a>
+  </div>
   
-      <p>
-        <mat-form-field appearance="outline">
-          <mat-label>Professeur</mat-label>
-          <mat-select formControlName="professeur">
-            <mat-option *ngFor="let teacher of teachers" [value]="teacher._id">{{ teacher.nom }}</mat-option>
-          </mat-select>
-          <mat-error *ngIf="getProfesseur?.invalid && (getProfesseur?.dirty || getProfesseur?.touched)">
-            Un professeur est requis
-          </mat-error>
-        </mat-form-field>
-      </p>
-      
+  <mat-list *ngFor="let subject of subjects" class="matList">
+    <nav>
+      <a routerLink="/subject/{{subject._id}}">
+        <h3 mat-subheader>{{ subject.matiere }}</h3>
+        <mat-list-item class="matItem">
+          
+          <img [src]="subject.image_matiere" alt="Image de la matière">
+          <p>Professeur : {{ subject.professeurDetails?.nom }} {{ subject.professeurDetails?.prenom }}</p>
+          <img [src]="subject.professeurDetails?.image" alt="Image du professeur">
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </a>
+    </nav>
+  </mat-list>
   
-      <p>
-        <input type="file" name="image" (change)="onFileSelected($event)" />
-      </p>
-  
-      <div class="button">
-        <button mat-button type="button" (click)="subjectForm.reset()">Réinitialiser</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="subjectForm.invalid">Ajouter Matière</button>
-      </div>
-    </form>
-  </mat-card>
-  
+</main>

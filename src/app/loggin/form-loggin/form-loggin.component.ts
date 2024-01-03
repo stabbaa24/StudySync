@@ -25,8 +25,8 @@ export class FormLogginComponent {
 
   onLogin() {
     if (this.loginForm.valid) {
-      const username = this.loginForm.value.username ?? '';
-      const password = this.loginForm.value.password ?? '';
+      const username = this.getUsername?.value ?? '';
+      const password = this.getPassword?.value ?? '';
 
       this.authService.logIn(username, password).subscribe({
         next: () => {

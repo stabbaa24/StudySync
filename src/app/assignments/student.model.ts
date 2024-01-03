@@ -1,6 +1,6 @@
 export class Student {
     _id?: string;
-    user?: string; //si user non ref encore
+    user!: string;
     nom!: string;
     prenom!: string;
     image!: string;

@@ -10,45 +10,46 @@ import { bdInitialAssignments } from './data';
 })
 
 export class AssignmentsService {
+  getSubjects() {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(private loggingService: LoggingService,
     private http: HttpClient) { }
 
   url = "http://localhost:8010/api/assignments";
+
   getAssignments(): Observable<Assignment[]> {
-    //return of(this.assignments);
     return this.http.get<Assignment[]>(this.url); // renvoie un Observable
   }
 
   // renvoie comme Observable l'assignment dont l'id est passé
   // en paramètre, ou undefined s'il n'existe pas
-  getAssignment(id: number): Observable<Assignment | undefined> {
-    //const a:Assignment | undefined = this.assignments. find(a => a.id === id);
-    //return of(a);
+  /*getAssignment(id: number): Observable<Assignment | undefined> {
     return this.http.get<Assignment>(this.url + "/" + id);
+  }*/
+
+  getAssignment(id: number): Observable<Assignment | undefined> {
+    // Assurez-vous que l'URL est correctement formée et que 'id' n'est pas undefined
+    const url = `${this.url}/${id}`;
+    console.log('Appel API avec URL:', url);
+    return this.http.get<Assignment>(url);
   }
+  
 
   addAssignment(assignment: Assignment): Observable<any> {
-    /*this.assignments.push(assignment);
-
-    this.loggingService.log(assignment.nom, "ajouté");
-    return of("Assignment ajouté !");*/
     return this.http.post<Assignment>(this.url, assignment);
   }
 
   updateAssignment(assignment: Assignment): Observable<any> {
-    //return of("Assignment service: assignment modifié !");
     return this.http.put<Assignment>(this.url, assignment);
   }
 
   deleteAssignment(assignment: Assignment): Observable<any> {
-    /*let pos = this.assignments.indexOf(assignment);
-    this.assignments.splice(pos, 1);
-
-    return of("Assignment service: assignmentsupprimé !");*/
-    let deleteURI = this.url + "/" + assignment._id;
+    const deleteURI = this.url + "/" + assignment._id; // Assurez-vous que _id est correct
     return this.http.delete(deleteURI);
-  }
+}
+
 
   /*peuplerBD() {
     bdInitialAssignments.forEach(a => {

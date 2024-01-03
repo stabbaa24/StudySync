@@ -35,6 +35,7 @@ export class AssignmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPageData();
+    console.log("assignments.component.ts");
   }
 
   loadPageData(): void {
@@ -61,17 +62,20 @@ export class AssignmentsComponent implements OnInit {
   }
 
   getAssignments() {
+    console.log("Dans getAssignment : ");
     this.assignmentsService.getAssignments()
       .subscribe(assignments => {
         this.assignments = assignments;
+        console.log("Assignments : ");
+        console.log(assignments);
       });
   }
 
   assignmentClique(assignment: Assignment) {
-    //console.log("Assignment cliqué : " + assignment.nom);
+    console.log("Assignment cliqué : " + assignment.nom + " " + assignment.id);
     this.assignmentSelectionne = assignment;
   }
-
+  
   onAddAssignmentBtnClick() {
     //this.formVisible = true;
   }
@@ -87,27 +91,12 @@ export class AssignmentsComponent implements OnInit {
       this.formVisible = false;*/
   }
 
-  onDeleteAssignment(event: Assignment) {
+  /*onDeleteAssignment(event: Assignment) {
     const index = this.assignments.indexOf(event);
     if (index > -1) {
       this.assignments.splice(index, 1);
     }
     this.assignmentSelectionne = null;
-  }
-
-  //Gérer la pagination
-  /*onPreviousPage() {
-    if (this.page > 1) {
-      this.page--;
-      this.loadPageData();
-    }
-  }
-
-  onNextPage() {
-    if (this.page < this.totalPages) {
-      this.page++;
-      this.loadPageData();
-    }
   }*/
 
   onFirstPage() {

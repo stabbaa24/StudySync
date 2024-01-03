@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
 import { SubjectsService } from '../shared/subjects.service';
-import { TeachersService } from '../shared/teachers.service';
+import { Subject } from './subject.model';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-subjects',
@@ -9,108 +9,90 @@ import { TeachersService } from '../shared/teachers.service';
   styleUrls: ['./subjects.component.css']
 })
 export class SubjectsComponent {
-  subjectForm = new FormGroup({
-    matiere: new FormControl('', Validators.required),
-    professeur: new FormControl('', Validators.required),
-    image: new FormControl('', Validators.required)
-  });
+  titre = "Liste des Matières";
+  subjects!: Subject[];
+  getUploadedImage = "../../../";
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  
+  constructor(private subjectsService: SubjectsService) { }
 
-  file: File | null = null;
-  teachers: any[] = [];
-  selectedFileName: string | undefined;
-  imgFolder = 'src/assets/uploads/';
+   //Gérer la pagination
+   page: number = 1;
+   limit: number = 10;
+   totalDocs!: number;
+   totalPages!: number;
+   nextPage!: number;
+   prevPage!: number;
+   hasPrevPage: boolean = true;
+   hasNextPage!: boolean;
+   pagingCounter!: number;
+   hasPrevPageInUrl!: boolean;
+   hasNextPageInUrl!: boolean;
+   prevPageInUrl!: number;
+   nextPageInUrl!: number;
 
-  constructor(private subjectService: SubjectsService, private teacherService: TeachersService) {}
-
-  ngOnInit() {
-    this.teacherService.getTeachers().subscribe({
-      next: (teachers) => this.teachers = teachers,
-      error: (err) => console.error("Erreur lors de la récupération des professeurs", err)
-    });
+  ngOnInit(): void {
+    this.loadPageData();
   }
 
-  /*onAddSubject() {
-    if (this.subjectForm.invalid) {
-      return;
-    }
-  
-    const performAddSubject = () => {
-      const formData = new FormData();
-      formData.append('matiere', this.subjectForm.value.matiere ?? '');
-      formData.append('professeur', this.subjectForm.value.professeur ?? '');
-      formData.append('image_matiere', this.imgFolder + this.selectedFileName ?? '');
-      console.log(formData);
-      this.subjectService.addSubject(formData).subscribe({
-        next: () => console.log("Matière ajoutée avec succès"),
-        error: (err) => console.error("Erreur lors de l'ajout de la matière", err)
-      });
-    };
-  
-    if (this.file) {
-      const uploadObservable = this.subjectService.uploadImage(this.file);
-      uploadObservable.subscribe({
-        next: (imageResponse) => {
-          performAddSubject();
-        },
-        error: (error) => {
-          console.error('Erreur lors de l\'upload de l\'image : ', error);
+  loadPageData(): void {
+    this.subjectsService.getSubjects().
+      subscribe(data => {
+        this.subjects = data.docs;
+        console.log(this.subjects);
+        this.totalDocs = data.totalDocs;
+        this.totalPages = data.totalPages;
+        this.nextPage = data.nextPage;
+        this.prevPage = data.prevPage;
+        this.hasPrevPage = data.hasPrevPage;
+        this.hasNextPage = data.hasNextPage;
+        this.pagingCounter = data.pagingCounter;
+        this.hasPrevPageInUrl = data.hasPrevPageInUrl;
+        this.hasNextPageInUrl = data.hasNextPageInUrl;
+        this.prevPageInUrl = data.prevPageInUrl;
+        this.nextPageInUrl = data.nextPageInUrl;
+
+        if (this.paginator) {
+          this.paginator.pageIndex = this.page - 1;
         }
-      });
-    } else {
-      // Si aucune image n'est fournie, appeler performAddSubject avec un chemin vide ou un chemin par défaut
-      performAddSubject();
-    }
-  }*/
+      }
+      );
+  }
 
-  onAddSubject() {
-    if (!this.subjectForm.valid) {
-      console.log('Formulaire non valide');
-      return;
-    }
-  
-    const performAddSubject = (imagePath: string | undefined) => {
-      
-      const additionalData = {
-        matiere: this.subjectForm.value.matiere,
-        image_matiere: this.imgFolder + this.selectedFileName,
-        professeur: this.subjectForm.value.professeur
-    };
-     
-      this.subjectService.addSubject(additionalData).subscribe({
-        next: () => console.log('Matière ajoutée avec succès'),
-        error: (error) => console.error('Erreur lors de l\'ajout de la matière : ', error)
+  /*getSubjects() {
+    this.subjectsService.getSubjects()
+      .subscribe(subjects => {
+        this.subjects = subjects;
+        console.log(this.subjects);
       });
-    };
-  
-    if (this.file) {
-      const uploadObservable = this.subjectService.uploadImage(this.file);
-      uploadObservable.subscribe({
-        next: (imageResponse) => {
-          const imagePath = 'src/assets/uploads/' + imageResponse.fileName; // ou tout autre chemin que vous recevez
-          performAddSubject(imagePath);
-        },
-        error: (error) => {
-          console.error('Erreur lors de l\'upload de l\'image : ', error);
-          performAddSubject(''); // Gérer l'erreur et appeler la fonction même sans l'image
-        }
-      });
-    } else {
-      performAddSubject(''); // Pas de fichier à uploader
-    }
   }
   
+  adjustImagePath(subject: any): any {
+    const assetsIndex = subject.image_matiere.indexOf('assets/');
+    if (assetsIndex !== -1) {
+      subject.image_matiere = subject.image_matiere.substring(assetsIndex);
+    }
+    return subject;
+  }
+  */
   
-
-  onFileSelected(event: any) {
-    this.file = event.target.files[0];
-    if (this.file) {
-      this.subjectForm.get('image')?.setValue(this.file.name);
-      this.selectedFileName = this.file.name;
-      console.log('selectedFileName : ', this.selectedFileName);
+  onFirstPage() {
+    if (this.page > 1) {
+      this.page = 1;
+      this.loadPageData();
     }
   }
 
-  get getMatiere() { return this.subjectForm.get('matiere'); }
-  get getProfesseur() { return this.subjectForm.get('professeur'); }
-  get getImage() { return this.subjectForm.get('image'); }
+  onLastPage() {
+    if(this.page < this.totalPages) {
+      this.page = this.totalPages;
+      this.loadPageData();
+    }
+  }
+
+  onPaginateChange(event: any): void {
+    this.page = event.pageIndex + 1;
+    this.limit = event.pageSize;
+    this.loadPageData();
+  }
 }

@@ -40,6 +40,7 @@ import { RegisterComponent } from './loggin/register/register.component';
 import {MatRadioModule} from '@angular/material/radio';
 import { AuthInterceptor } from './shared/auth.interceptor';
 import { SubjectsComponent } from './subjects/subjects.component';
+import { AddSubjectComponent } from './subjects/add-subject/add-subject.component';
 
 
 const routes: Routes = [
@@ -56,7 +57,8 @@ const routes: Routes = [
   },
   { path: 'loggin', component: FormLogginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'subjects', component: SubjectsComponent }
+  { path: 'subjects', component: SubjectsComponent },
+  { path: 'addSubject', component: AddSubjectComponent }
 ];
 
 @NgModule({
@@ -71,7 +73,8 @@ const routes: Routes = [
     HomeComponent,
     LoadComponent,
     RegisterComponent,
-    SubjectsComponent
+    SubjectsComponent,
+    AddSubjectComponent
   ],
   imports: [
     BrowserModule,

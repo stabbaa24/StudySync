@@ -19,6 +19,8 @@ export class AuthService {
     return this.usersService.getRole({ login, password });
   }
 
+  //https://rxjs.dev/api/index/function/switchMap
+  //https://rxjs.dev/api/index/function/tap
   logIn(login: string, password: string) {
     return this.usersService.logInUser({ login, password }).pipe(
       switchMap((userResponse: any) => {
@@ -54,21 +56,15 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    console.log("L'utilisateur est il admin (auth.service) ? :" + this.getUsers?.role);
+    //console.log("L'utilisateur est il admin (auth.service) ? :" + this.getUsers?.role);
     return this.loggedIn && this.getUsers?.role === 'admin';
   }
 
-  /*register(login: string, password: string, role: string) {
-    return this.usersService.registerUser({ login, password, role });
-  }*/
-  // auth.service.ts
   register(username: string, password: string, role: string) {
     return this.usersService.registerUser({ login: username, password, role });
   }
 
-
   getToken() {
     return this.token;
   }
-
 }

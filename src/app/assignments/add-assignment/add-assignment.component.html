@@ -11,6 +11,28 @@
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
+    <mat-form-field>
+        <mat-select [(ngModel)]="matiere" name="matiere" placeholder="Choisir une matière">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.matiere">{{ subject.matiere }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-select [(ngModel)]="groupe" name="groupe" placeholder="Choisir un groupe">
+            <mat-option value="TD 1">TD 1</mat-option>
+            <mat-option value="TD 2">TD 2</mat-option>
+            <mat-option value="TD 3">TD 3</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-select [(ngModel)]="promo" name="promo" placeholder="Choisir une promo">
+            <mat-option value="L3">L3</mat-option>
+            <mat-option value="M1">M1</mat-option>
+            <mat-option value="M2">M2</mat-option>
+        </mat-select>
+    </mat-form-field>
+
     <a routerLink="/home">
         <button mat-stroked-button color="primary" (click)="onSubmit();assignmentForm.reset()">
             Ajouter un devoir

@@ -1,0 +1,19 @@
+.matList {
+    display: block;
+    width: 100%;
+    min-height: 50em; /* Hauteur minimale */
+    max-height: 100vh; /* Hauteur maximale avant le défilement */
+    overflow-y: auto; /* Permet le défilement vertical si nécessaire */
+    background-color: antiquewhite;
+}
+
+.matItem {
+    /* Styles supplémentaires pour les items si nécessaire */
+    min-height: 50em; /* Hauteur minimale pour chaque item */
+    background-color: aqua;
+}
+
+img {
+    width: 10%;
+    height: auto;
+}

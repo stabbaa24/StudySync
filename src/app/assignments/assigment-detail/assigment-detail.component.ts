@@ -21,10 +21,12 @@ export class AssigmentDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAssignment();
+    console.log("getAssignment()" + this.getAssignment);
     console.log("Query Params : ");
     console.log(this.route.snapshot.queryParams);
     console.log("Fragment : ");
     console.log(this.route.snapshot.fragment);
+    console.log("transmis : " + this.assignmentTransmis);
   }
 
   onAssignmentRendu() {
@@ -37,7 +39,6 @@ export class AssigmentDetailComponent implements OnInit {
         console.log(message);
       this.router.navigate(['/home']); //ici pour ne pas risquer d'afficher la page avant que les données soient modifiées
       });
-      //this.router.navigate(['/home']);
   }
 
   onAssignmentDelete() {
@@ -46,8 +47,6 @@ export class AssigmentDetailComponent implements OnInit {
         console.log(message);
         this.router.navigate(['/home']);
       });
-
-    //this.router.navigate(['/home']);
   }
 
   onClickEdit() {
@@ -59,14 +58,16 @@ export class AssigmentDetailComponent implements OnInit {
     // on recupere l'id dans le snapshot passe par le routeur
     // le "+" force la conversion de l'id de type string en "number"
     const id = +this.route.snapshot.params['id'];
+    console.log("id : " + id);
     this.assignmentsService.getAssignment(id)
       .subscribe(assignment => {
         this.assignmentTransmis = assignment || null;
+        console.log("transmis : " + this.assignmentTransmis);
+        console.log("assignment récupéré : " + assignment);
       });
   }
 
   isAdmin(): boolean {
-    console.log("L'utilisateur est il admin (detail check component) ? :" + this.authService.isAdmin());
     return this.authService.isAdmin();
   }
 }

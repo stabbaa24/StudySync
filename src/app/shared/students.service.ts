@@ -21,6 +21,7 @@ export class StudentsService {
         return this.http.post<any>(this.url, data);
     } 
 
+    //https://developer.mozilla.org/en-US/docs/Web/API/FormData/append
     uploadImage(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('image', file, file.name);
