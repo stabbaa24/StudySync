@@ -42,6 +42,9 @@ import { AuthInterceptor } from './shared/auth.interceptor';
 import { SubjectsComponent } from './subjects/subjects.component';
 import { AddSubjectComponent } from './subjects/add-subject/add-subject.component';
 
+import {MatTableModule} from '@angular/material/table';
+import {MatSortModule} from '@angular/material/sort';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 const routes: Routes = [
   //{ path: 'load', component: LoadComponent },
@@ -98,7 +101,10 @@ const routes: Routes = [
     ReactiveFormsModule,
     HttpClientModule,
     MatPaginatorModule,
-    MatRadioModule
+    MatRadioModule,
+    MatTableModule,
+    MatSortModule,
+    MatExpansionModule
   ],
   providers: [
     {

@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AssignmentsService } from '../shared/assignments.service';
 import { Assignment } from './assignment.model';
 import { MatPaginator } from '@angular/material/paginator';
-
+import { MatSort } from '@angular/material/sort';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-assignments',
   templateUrl: './assignments.component.html',
@@ -14,7 +15,10 @@ export class AssignmentsComponent implements OnInit {
   formVisible = false;
   assignmentSelectionne!: Assignment | null;
   assignments!: Assignment[];
+  columnsToDisplay = ['matiere', 'nom', 'dateDeRendu', 'groupe', 'promo', 'rendu'];
+
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  @ViewChild(MatSort) sort: MatSort | undefined;
 
   //Gérer la pagination
   page: number = 1;
@@ -31,7 +35,10 @@ export class AssignmentsComponent implements OnInit {
   prevPageInUrl!: number;
   nextPageInUrl!: number;
 
-  constructor(private assignmentsService: AssignmentsService) { }
+  constructor(
+    private assignmentsService: AssignmentsService, 
+    private router: Router
+    ) { }
 
   ngOnInit(): void {
     this.loadPageData();
@@ -41,6 +48,8 @@ export class AssignmentsComponent implements OnInit {
   loadPageData(): void {
     this.assignmentsService.getAssignmentsPagine(this.page, this.limit).
       subscribe(data => {
+        console.log("Dans loadPageData : ");
+        console.log(data);
         this.assignments = data.docs;
         this.totalDocs = data.totalDocs;
         this.totalPages = data.totalPages;
@@ -61,43 +70,11 @@ export class AssignmentsComponent implements OnInit {
       );
   }
 
-  getAssignments() {
-    console.log("Dans getAssignment : ");
-    this.assignmentsService.getAssignments()
-      .subscribe(assignments => {
-        this.assignments = assignments;
-        console.log("Assignments : ");
-        console.log(assignments);
-      });
-  }
-
   assignmentClique(assignment: Assignment) {
+    this.router.navigate(['/assignment', assignment.id]);
     console.log("Assignment cliqué : " + assignment.nom + " " + assignment.id);
     this.assignmentSelectionne = assignment;
   }
-  
-  onAddAssignmentBtnClick() {
-    //this.formVisible = true;
-  }
-
-  onNouvelAssignment(event: Assignment) {
-
-    /*this.assignmentsService.addAssignment(event)
-      .subscribe(message => {
-        console.log(message);
-        //this.getAssignments();
-      });
-
-      this.formVisible = false;*/
-  }
-
-  /*onDeleteAssignment(event: Assignment) {
-    const index = this.assignments.indexOf(event);
-    if (index > -1) {
-      this.assignments.splice(index, 1);
-    }
-    this.assignmentSelectionne = null;
-  }*/
 
   onFirstPage() {
     if (this.page > 1) {

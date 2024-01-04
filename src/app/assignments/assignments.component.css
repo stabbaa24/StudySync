@@ -62,3 +62,9 @@
     margin: 0 8px;
     /* Ajustez l'espacement autour du texte de la plage */
 }
+
+.assignment-details {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #e0e0e0;
+  }

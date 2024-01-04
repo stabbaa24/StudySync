@@ -59,23 +59,6 @@ export class SubjectsComponent {
       );
   }
 
-  /*getSubjects() {
-    this.subjectsService.getSubjects()
-      .subscribe(subjects => {
-        this.subjects = subjects;
-        console.log(this.subjects);
-      });
-  }
-  
-  adjustImagePath(subject: any): any {
-    const assetsIndex = subject.image_matiere.indexOf('assets/');
-    if (assetsIndex !== -1) {
-      subject.image_matiere = subject.image_matiere.substring(assetsIndex);
-    }
-    return subject;
-  }
-  */
-  
   onFirstPage() {
     if (this.page > 1) {
       this.page = 1;

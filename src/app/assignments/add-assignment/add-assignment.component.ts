@@ -47,6 +47,7 @@ export class AddAssignmentComponent implements OnInit {
     newAssignment.note = this.note;
     newAssignment.remarques = this.remarques;
     newAssignment.auteur = this.auteur;
+    newAssignment.matiere = this.matiere;
     this.assignmentsService.addAssignment(newAssignment)
       .subscribe(message => console.log(message));
   }
