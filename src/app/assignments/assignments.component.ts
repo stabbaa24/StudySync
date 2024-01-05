@@ -4,10 +4,18 @@ import { Assignment } from './assignment.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 @Component({
   selector: 'app-assignments',
   templateUrl: './assignments.component.html',
-  styleUrls: ['./assignments.component.css']
+  styleUrls: ['./assignments.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 
 export class AssignmentsComponent implements OnInit {
@@ -16,6 +24,7 @@ export class AssignmentsComponent implements OnInit {
   assignmentSelectionne!: Assignment | null;
   assignments!: Assignment[];
   columnsToDisplay = ['matiere', 'nom', 'dateDeRendu', 'groupe', 'promo', 'rendu'];
+  expandedAssignment: Assignment | null = null;
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
@@ -71,9 +80,11 @@ export class AssignmentsComponent implements OnInit {
   }
 
   assignmentClique(assignment: Assignment) {
-    this.router.navigate(['/assignment', assignment.id]);
-    console.log("Assignment cliqué : " + assignment.nom + " " + assignment.id);
-    this.assignmentSelectionne = assignment;
+    this.toggleExpansion(assignment);
+  }
+
+  toggleExpansion(assignment: Assignment) {
+    this.expandedAssignment = this.expandedAssignment === assignment ? null : assignment;
   }
 
   onFirstPage() {
