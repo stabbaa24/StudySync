@@ -1,5 +1,5 @@
 <!--https://stackblitz.com/angular/eaajjobynjkl?file=src%2Fapp%2Ftable-expandable-rows-example.html pour le tab expand-->
-
+<!-- https://stackblitz.com/edit/angular-maaterial-table-with-edit-delete?file=index.html,app%2Ftable-sorting-example.html pour le bouton edit et delete-->
 <main class="container">
 
   <!--Creer les boutons de pagination-->
@@ -25,45 +25,63 @@
   </div>
 
   <table mat-table [dataSource]="assignments" multiTemplateDataRows class="mat-elevation-z8">
-    
+    <!-- Colonnes de Tableau -->
     <ng-container *ngFor="let column of columnsToDisplay" [matColumnDef]="column">
       <th mat-header-cell *matHeaderCellDef>{{ column | uppercase }}</th>
       <td mat-cell *matCellDef="let assignment">
+        <!-- Conditions spécifiques pour Admin et Non-Admin && assignment.matiereDetails?.matiere === matiereProfesseur-->
+        <ng-container *ngIf="isAdmin() ">
+          <!-- Contenu spécifique pour Admin && assignment.groupe === groupeEtudiant && assignment.promo === promoEtudiant-->
+        </ng-container>
+        <ng-container *ngIf="!isAdmin()">
+          <!-- Contenu spécifique pour Non-Admin -->
+          <!-- Checkbox pour rendre l'assignment -->
+          <!-- <mat-checkbox (change)="onChangeAssignmentRendu(assignment, $event.checked)"></mat-checkbox>-->
+        </ng-container>
+        <!-- Contenu commun -->
         <ng-container *ngIf="column === 'dateDeRendu'">
           {{ assignment[column] | date: 'dd/MM/yyyy' }}
         </ng-container>
-
         <ng-container *ngIf="column === 'matiere'; else notSpecialColumn">
           {{ assignment.matiereDetails?.matiere }}
         </ng-container>
-
         <ng-template #notSpecialColumn>
           <ng-container *ngIf="column !== 'dateDeRendu'">{{ assignment[column] }}</ng-container>
         </ng-template>
       </td>
     </ng-container>
-    
+  
+    <!-- Expanded Detail -->
     <ng-container matColumnDef="expandedDetail">
       <td mat-cell *matCellDef="let assignment" [attr.colspan]="columnsToDisplay.length">
         <div class="example-element-detail" [@detailExpand]="expandedAssignment === assignment ? 'expanded' : 'collapsed'">
-       
           <div class="example-element-description">
-            Matière : {{assignment.matiereDetails?.matiere}}
-            
+            <!-- Détails pour tous -->
+            <p>Matière : {{assignment.matiereDetails?.matiere}}</p>
+            <img [src]="assignment.matiereDetails?.image_matiere" alt="Image de la matière" style="width: 100px;">
+            <p>Professeur : {{assignment.matiereDetails?.professeurDetails?.nom}}</p>
+            <img [src]="assignment.matiereDetails?.professeurDetails?.image" alt="Image du professeur" style="width: 100px;">
+            <!-- Détails spécifiques pour Non-Admin si assignment rendu -->
+            <div *ngIf="!isAdmin() && assignment.rendu">
+              <p>Note : {{ assignment.note }}</p>
+              <p>Remarques : {{ assignment.remarques }}</p>
+            </div>
+            <!-- Boutons pour Admin -->
+            <div *ngIf="isAdmin()">
+              <button mat-button color="primary" (click)="onClickEdit(assignment)">Éditer</button>
+              <button mat-button color="warn" (click)="onAssignmentDelete(assignment)">Supprimer</button>
+            </div>
           </div>
         </div>
       </td>
     </ng-container>
-
+  
+    <!-- Lignes de Tableau -->
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    
-    <tr mat-row *matRowDef="let assignment; columns: columnsToDisplay;"
-        class="example-element-row"
-        [class.example-expanded-row]="expandedAssignment === assignment"
-        (click)="expandedAssignment = expandedAssignment === assignment ? null : assignment">
-    </tr>
-
+    <tr mat-row *matRowDef="let assignment; columns: columnsToDisplay;" class="example-element-row" [class.example-expanded-row]="expandedAssignment === assignment" (click)="expandedAssignment = expandedAssignment === assignment ? null : assignment"></tr>
     <tr mat-row *matRowDef="let assignment; columns: ['expandedDetail']" class="example-detail-row"></tr>
   </table>
+  
+  
 
 </main>

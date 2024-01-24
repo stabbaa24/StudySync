@@ -4,6 +4,11 @@ import { Assignment } from './assignment.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
+import { AuthService } from '../shared/auth.service';
+import { UsersService } from '../shared/users.service';
+import { TeachersService } from '../shared/teachers.service';
+import { StudentsService } from '../shared/students.service';
+
 import { animate, state, style, transition, trigger } from '@angular/animations';
 @Component({
   selector: 'app-assignments',
@@ -21,10 +26,14 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 export class AssignmentsComponent implements OnInit {
   titre = "Rendu des devoirs";
   formVisible = false;
-  assignmentSelectionne!: Assignment | null;
+  assignmentTransmis!: Assignment | null;
+  //assignmentSelectionne!: Assignment | null;
   assignments!: Assignment[];
   columnsToDisplay = ['matiere', 'nom', 'dateDeRendu', 'groupe', 'promo', 'rendu'];
   expandedAssignment: Assignment | null = null;
+  getLogin: string = '';
+  groupeEtudiant: string = '';
+  promoEtudiant: string = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
@@ -45,21 +54,47 @@ export class AssignmentsComponent implements OnInit {
   nextPageInUrl!: number;
 
   constructor(
-    private assignmentsService: AssignmentsService, 
-    private router: Router
-    ) { }
+    private assignmentsService: AssignmentsService,
+    private router: Router,
+    private authService: AuthService,
+    private userService: UsersService,
+    private teachersService: TeachersService,
+    private studentsService: StudentsService,
+  ) { }
 
   ngOnInit(): void {
+    this.getLogin = this.authService.getUsers?.login ?? '';
+    console.log("La personne loggué est : " + this.getLogin);
     this.loadPageData();
-    console.log("assignments.component.ts");
   }
 
+
   loadPageData(): void {
-    this.assignmentsService.getAssignmentsPagine(this.page, this.limit).
-      subscribe(data => {
-        console.log("Dans loadPageData : ");
-        console.log(data);
-        this.assignments = data.docs;
+    this.assignmentsService.getAssignmentsPagine(this.page, this.limit)
+      .subscribe(data => {
+        if (this.isAdmin()) {
+          this.assignments = data.docs.filter((assignment: { matiereDetails: { professeurDetails: { nom: string; prenom: string; }; }; }) => {
+            const getTeacherLog = assignment.matiereDetails.professeurDetails.nom + "." +
+              assignment.matiereDetails.professeurDetails.prenom;
+
+            return getTeacherLog === this.getLogin;
+          });
+        } else {
+          this.studentsService.getStudents().subscribe(students => {
+            const student = students.find((s: { nom: string; prenom: string; }) => 
+              (s.nom + '.' + s.prenom) === this.getLogin);
+        
+            if (student) {
+              this.groupeEtudiant = student.groupe;
+              this.promoEtudiant = student.promo;
+
+              this.assignments = data.docs.filter((assignment: { groupe: string; promo: string; }) => {
+                return assignment.groupe === this.groupeEtudiant && assignment.promo === this.promoEtudiant;
+              });
+            }
+          });
+        }
+
         this.totalDocs = data.totalDocs;
         this.totalPages = data.totalPages;
         this.nextPage = data.nextPage;
@@ -75,8 +110,7 @@ export class AssignmentsComponent implements OnInit {
         if (this.paginator) {
           this.paginator.pageIndex = this.page - 1;
         }
-      }
-      );
+      });
   }
 
   assignmentClique(assignment: Assignment) {
@@ -87,6 +121,51 @@ export class AssignmentsComponent implements OnInit {
     this.expandedAssignment = this.expandedAssignment === assignment ? null : assignment;
   }
 
+  onAssignmentDelete(assignement: Assignment) {
+    /*
+    this.assignmentsService.deleteAssignment(this.assignmentTransmis!)
+      .subscribe(message => {
+        console.log(message);
+        this.router.navigate(['/home']);
+      });
+  }
+    
+    */
+    this.assignmentsService.deleteAssignment(assignement)
+      .subscribe(message => {
+        console.log(message);
+        this.loadPageData();
+      });
+  }
+
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+
+  /*
+  onClickEdit() {
+   this.router.navigate(['/assignment', this.assignmentTransmis?.id, 'edit'],
+     { queryParams: {*/ /*nom: this.assignmentTransmis?.nom }, fragment: 'edition' });
+}*/
+
+  onClickEdit(assignement: Assignment) {
+    this.router.navigate(['/assignment', assignement._id, 'edit'],
+      { queryParams: { /*nom: this.assignmentTransmis?.nom*/ }, fragment: 'edition' });
+  }
+
+  //onChangeAssignmentRendu(assignment, $event.checked
+  onChangeAssignmentRendu(assignment: Assignment, $event: any) {
+    console.log("Dans onChangeAssignmentRendu");
+    console.log(assignment);
+    console.log($event.checked);
+    assignment.rendu = $event.checked;
+    this.assignmentsService.updateAssignment(assignment)
+      .subscribe(message => {
+        console.log(message);
+      });
+  }
+
   onFirstPage() {
     if (this.page > 1) {
       this.page = 1;
@@ -95,7 +174,7 @@ export class AssignmentsComponent implements OnInit {
   }
 
   onLastPage() {
-    if(this.page < this.totalPages) {
+    if (this.page < this.totalPages) {
       this.page = this.totalPages;
       this.loadPageData();
     }

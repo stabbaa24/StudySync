@@ -4,7 +4,7 @@
         <p>
             <mat-form-field appearance="outline">
             <mat-label>Nom d'utilisateur</mat-label>
-            <input matInput formControlName="username" placeholder="Nom d'utilisateur" required>
+            <input matInput formControlName="username" placeholder="Syntaxe : Nom.Prenom" required>
             <mat-icon matSuffix>person</mat-icon>
             <mat-hint>Entrez votre nom d'utilisateur</mat-hint>
             <mat-error *ngIf="getUsername?.invalid && (getUsername?.dirty || getUsername?.touched)">

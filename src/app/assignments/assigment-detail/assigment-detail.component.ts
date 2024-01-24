@@ -3,6 +3,7 @@ import { Assignment } from '../assignment.model';
 import { AssignmentsService } from 'src/app/shared/assignments.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/shared/auth.service';
+import { Subject } from 'src/app/subjects/subject.model';
 
 @Component({
   selector: 'app-assigment-detail',
@@ -17,7 +18,9 @@ export class AssigmentDetailComponent implements OnInit {
   constructor(private assignmentsService: AssignmentsService,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private subject: Subject
+    ) { }
 
   ngOnInit(): void {
     this.getAssignment();

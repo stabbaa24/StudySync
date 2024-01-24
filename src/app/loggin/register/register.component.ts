@@ -13,7 +13,6 @@ export class RegisterComponent {
 
   registerForm = new FormGroup({
     role: new FormControl('', Validators.required),
-    username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     confirmPassword: new FormControl('', Validators.required),
     lastname: new FormControl('', Validators.required),
@@ -25,7 +24,6 @@ export class RegisterComponent {
 
   isRegisterFailed = false;
   getErrorRegister = 'Nom d\'utilisateur ou mot de passe incorrect.';
-  getErrorRegisterUsername = 'Nom d\'utilisateur déjà utilisé.';
   file: File | null = null;
   imgFolder = 'assets/uploads/';
 
@@ -59,7 +57,7 @@ export class RegisterComponent {
     }
 
     const role = this.registerForm.value.role ?? 'user';
-    const username = this.getUsername?.value ?? '';
+    const username = this.getLastName?.value + '.' + this.getFirstName?.value;
     const password = this.getPassword?.value ?? '';
     const confirmPassword = this.getConfirmPassword?.value ?? '';
     if (password !== confirmPassword) {
@@ -123,7 +121,6 @@ export class RegisterComponent {
     }
   }
 
-  get getUsername() { return this.registerForm.get('username'); }
   get getPassword() { return this.registerForm.get('password'); }
   get getConfirmPassword() { return this.registerForm.get('confirmPassword'); }
   get getLastName() { return this.registerForm.get('lastname'); }
