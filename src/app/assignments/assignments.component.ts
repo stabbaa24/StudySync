@@ -8,8 +8,13 @@ import { AuthService } from '../shared/auth.service';
 import { UsersService } from '../shared/users.service';
 import { TeachersService } from '../shared/teachers.service';
 import { StudentsService } from '../shared/students.service';
-
+import { RenderedService } from '../shared/rendered.service';
+import { SubjectsService } from '../shared/subjects.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { catchError, forkJoin, map, of, tap } from 'rxjs';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { Subject } from '../subjects/subject.model'
+
 @Component({
   selector: 'app-assignments',
   templateUrl: './assignments.component.html',
@@ -27,13 +32,21 @@ export class AssignmentsComponent implements OnInit {
   titre = "Rendu des devoirs";
   formVisible = false;
   assignmentTransmis!: Assignment | null;
-  //assignmentSelectionne!: Assignment | null;
   assignments!: Assignment[];
   columnsToDisplay = ['matiere', 'nom', 'dateDeRendu', 'groupe', 'promo', 'rendu'];
   expandedAssignment: Assignment | null = null;
   getLogin: string = '';
   groupeEtudiant: string = '';
   promoEtudiant: string = '';
+  isRendered: boolean | null = null;
+  matieres: string[] = [];
+  loadingRenders = true;
+  rendersMap = new Map<string, boolean>();
+  filteredAssignments!: Assignment[];
+  searchText: string = '';
+  selectedMatiere: string = '';
+  selectedStatus: string = 'all';
+  matiereIdMap: Record<string, string> = {}; //https://www.danywalls.com/how-to-use-record-type-in-typescript
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
@@ -57,21 +70,35 @@ export class AssignmentsComponent implements OnInit {
     private assignmentsService: AssignmentsService,
     private router: Router,
     private authService: AuthService,
-    private userService: UsersService,
-    private teachersService: TeachersService,
     private studentsService: StudentsService,
+    private renderedService: RenderedService,
+    private subjectService: SubjectsService
   ) { }
 
   ngOnInit(): void {
     this.getLogin = this.authService.getUsers?.login ?? '';
     console.log("La personne loggué est : " + this.getLogin);
+
+    this.subjectService.getSubjects().subscribe({
+      next: (subjects) => {
+        this.matieres = subjects.docs.map((subject: Subject) => subject.matiere);
+        
+        subjects.docs.forEach((subject: Subject) => {
+          this.matiereIdMap[subject.matiere] = subject._id as string;
+        });
+        console.log("Matieres récupérées:", this.matieres);
+      },
+      error: (err) => console.error("Erreur lors de la récupération des matières", err)
+    });
+
     this.loadPageData();
   }
-
 
   loadPageData(): void {
     this.assignmentsService.getAssignmentsPagine(this.page, this.limit)
       .subscribe(data => {
+        console.log("data.docs" + data.docs);
+
         if (this.isAdmin()) {
           this.assignments = data.docs.filter((assignment: { matiereDetails: { professeurDetails: { nom: string; prenom: string; }; }; }) => {
             const getTeacherLog = assignment.matiereDetails.professeurDetails.nom + "." +
@@ -79,21 +106,42 @@ export class AssignmentsComponent implements OnInit {
 
             return getTeacherLog === this.getLogin;
           });
-        } else {
-          this.studentsService.getStudents().subscribe(students => {
-            const student = students.find((s: { nom: string; prenom: string; }) => 
-              (s.nom + '.' + s.prenom) === this.getLogin);
-        
-            if (student) {
-              this.groupeEtudiant = student.groupe;
-              this.promoEtudiant = student.promo;
 
-              this.assignments = data.docs.filter((assignment: { groupe: string; promo: string; }) => {
-                return assignment.groupe === this.groupeEtudiant && assignment.promo === this.promoEtudiant;
+          this.filteredAssignments = [...this.assignments];
+        }
+
+        else {
+          this.studentsService.getStudents().subscribe(students => {
+            const studentLogin = students.find((s: { nom: string; prenom: string; }) =>
+              s.nom + '.' + s.prenom === this.getLogin
+            );
+
+            if (studentLogin) {
+              this.groupeEtudiant = studentLogin.groupe;
+              this.promoEtudiant = studentLogin.promo;
+
+              this.assignments = data.docs.filter((assignment: { groupe: string; promo: string; }) =>
+                assignment.groupe === this.groupeEtudiant && assignment.promo === this.promoEtudiant
+              );
+
+              this.assignments.forEach((assignment: Assignment) => {
+                if (assignment._id) {
+                  this.renderedService.getRendered(assignment._id, this.getLogin)
+                    .subscribe(render => {
+                      if (assignment._id === undefined) throw new Error("assignment._id est undefined");
+                      this.rendersMap.set(assignment._id, render.estRendu);
+                    }, error => {
+                      console.error(`Erreur lors de la récupération du render pour l'assignment ${assignment._id}: `, error);
+                    });
+                    
+
+                }
               });
+              this.filteredAssignments = [...this.assignments];
             }
           });
         }
+        this.loadRenders();
 
         this.totalDocs = data.totalDocs;
         this.totalPages = data.totalPages;
@@ -113,6 +161,37 @@ export class AssignmentsComponent implements OnInit {
       });
   }
 
+  loadRenders(): void {
+    this.loadingRenders = true;
+    let renderRequests = this.assignments
+      .filter(assignment => assignment._id !== undefined)
+      .map(assignment => {
+        if (assignment._id === undefined) throw new Error("assignment._id est undefined");
+        return this.renderedService.getRendered(assignment._id, this.getLogin)
+          .pipe(
+            catchError(() => of({ rendu: false })),
+            tap(render => {
+              if (assignment._id === undefined) throw new Error("assignment._id est undefined");
+              this.rendersMap.set(assignment._id, render.rendu);
+            })
+          );
+      });
+
+    forkJoin(renderRequests).subscribe({
+      next: () => this.loadingRenders = false,
+      error: (error) => console.error("Erreur lors du chargement des renders: ", error)
+    });
+  }
+
+
+  isAssignmentRendered(assignmentId: string | undefined): boolean {
+    if (assignmentId === undefined) {
+      console.log("assignmentId est undefined");
+      return false;
+    }
+    return this.rendersMap.get(assignmentId) || false;
+  }
+
   assignmentClique(assignment: Assignment) {
     this.toggleExpansion(assignment);
   }
@@ -122,50 +201,104 @@ export class AssignmentsComponent implements OnInit {
   }
 
   onAssignmentDelete(assignement: Assignment) {
-    /*
-    this.assignmentsService.deleteAssignment(this.assignmentTransmis!)
-      .subscribe(message => {
-        console.log(message);
-        this.router.navigate(['/home']);
-      });
-  }
-    
-    */
     this.assignmentsService.deleteAssignment(assignement)
       .subscribe(message => {
         console.log(message);
         this.loadPageData();
+        this.filterAssignments();
       });
   }
-
 
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
 
-  /*
-  onClickEdit() {
-   this.router.navigate(['/assignment', this.assignmentTransmis?.id, 'edit'],
-     { queryParams: {*/ /*nom: this.assignmentTransmis?.nom }, fragment: 'edition' });
-}*/
-
   onClickEdit(assignement: Assignment) {
-    this.router.navigate(['/assignment', assignement._id, 'edit'],
-      { queryParams: { /*nom: this.assignmentTransmis?.nom*/ }, fragment: 'edition' });
+    this.router.navigate(['/assignment', assignement.id, 'edit'],
+      { queryParams: { nom: this.assignmentTransmis?.nom }, fragment: 'edition' });
   }
 
-  //onChangeAssignmentRendu(assignment, $event.checked
+
   onChangeAssignmentRendu(assignment: Assignment, $event: any) {
     console.log("Dans onChangeAssignmentRendu");
     console.log(assignment);
     console.log($event.checked);
-    assignment.rendu = $event.checked;
-    this.assignmentsService.updateAssignment(assignment)
-      .subscribe(message => {
+
+    if (!this.isAdmin()) {
+      const render = {
+        assignment: assignment._id,
+        student: this.getLogin,
+        rendu: $event.checked
+      };
+
+      this.renderedService.addRendered(render).subscribe(message => {
         console.log(message);
       });
+    }
   }
 
+  toggleRendered(event: MatSlideToggleChange) {
+    this.isRendered = event.checked ? true : null; 
+    this.filterAssignments();
+  }
+  
+  
+  filterAssignments() {
+    let results = this.assignments;
+
+    if (this.selectedMatiere) {
+      const matiereId = this.matiereIdMap[this.selectedMatiere];
+      results = results.filter(assignment => {
+        return assignment.matiere === matiereId;
+      });
+    }
+
+    if (this.selectedStatus === 'noted') {
+      results = results.filter(assignment => assignment.note);
+    } else if (this.selectedStatus === 'unnoted') {
+      results = results.filter(assignment => !assignment.note);
+    }
+    if (this.isRendered === true) {
+      results = results.filter(assignment => 
+        assignment._id && this.rendersMap.get(assignment._id) === true
+      );
+    }
+  
+    if (this.searchText && this.searchText.trim() !== '') {
+      results = results.filter(assignment => 
+        assignment.nom.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    }
+
+    
+  
+    this.filteredAssignments = results;
+  }
+  
+  onSearchKeyup(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.applyFilter(input.value);
+  }
+
+  applyFilter(filterValue: string) {
+    this.searchText = filterValue;
+    this.filterAssignments();
+  }
+
+  onMatiereChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.selectedMatiere = select.value;
+    console.log("Matière sélectionnée bitch:", this.selectedMatiere);
+    this.filterAssignments();
+  }
+  
+  
+  onStatusChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.selectedStatus = select.value;
+    this.filterAssignments();
+  }
+  
   onFirstPage() {
     if (this.page > 1) {
       this.page = 1;

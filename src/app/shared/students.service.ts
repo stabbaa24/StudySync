@@ -26,6 +26,5 @@ export class StudentsService {
         const formData = new FormData();
         formData.append('image', file, file.name);
         return this.http.post(this.url + '/uploads', formData);
-    }
-    
+    }    
 }
