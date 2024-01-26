@@ -41,7 +41,7 @@ export class AddAssignmentComponent implements OnInit {
     newAssignment.id = Math.floor(Math.random() * 1000);
     newAssignment.nom = this.nomDevoir;
     newAssignment.dateDeRendu = this.dateDeRendu;
-    newAssignment.rendu = false;
+    newAssignment.rendu = 0;
     newAssignment.groupe = this.groupe as "TD 1" | "T2" | "TD3";
     newAssignment.promo = this.promo as "L3" | "M1" | "M2";
     newAssignment.note = this.note;

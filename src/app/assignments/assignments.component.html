@@ -39,19 +39,33 @@
   </select>
   <table mat-table [dataSource]="filteredAssignments" multiTemplateDataRows class="mat-elevation-z8">
     <!-- Colonnes de Tableau -->
-    <ng-container *ngFor="let column of columnsToDisplay" [matColumnDef]="column">
-      <th mat-header-cell *matHeaderCellDef>{{ column | uppercase }}</th>
-      <td mat-cell *matCellDef="let assignment">
+    <ng-container *ngFor="let column of columnsToDisplay">
+      <ng-container *ngIf="column !== 'rendu'" [matColumnDef]="column">
+        <th mat-header-cell *matHeaderCellDef>{{ column | uppercase }}</th>
+        <td mat-cell *matCellDef="let assignment">
+          <ng-container *ngIf="column === 'dateDeRendu'">
+            {{ assignment[column] | date: 'dd/MM/yyyy' }}
+          </ng-container>
+          <ng-container *ngIf="column === 'matiere'">
+            {{ assignment.matiereDetails?.matiere }}
+          </ng-container>
+          <ng-container *ngIf="column !== 'dateDeRendu' && column !== 'matiere'">
+            {{ assignment[column] }}
+          </ng-container>
+        </td>
+      </ng-container>
+    </ng-container>
 
-        <ng-container *ngIf="column === 'dateDeRendu'">
-          {{ assignment[column] | date: 'dd/MM/yyyy' }}
+    <!-- Colonne 'Rendu' spécifique -->
+    <ng-container matColumnDef="rendu">
+      <th mat-header-cell *matHeaderCellDef>Rendu</th>
+      <td mat-cell *matCellDef="let assignment">
+        <ng-container *ngIf="isAdmin()">
+          {{ assignment.rendu }} / {{ getTotalStudents(assignment.groupe, assignment.promo) }}
         </ng-container>
-        <ng-container *ngIf="column === 'matiere'; else notSpecialColumn">
-          {{ assignment.matiereDetails?.matiere }}
+        <ng-container *ngIf="!isAdmin()">
+          {{ assignment.rendu ? 'Rendu' : 'Non rendu' }}
         </ng-container>
-        <ng-template #notSpecialColumn>
-          <ng-container *ngIf="column !== 'dateDeRendu'">{{ assignment[column] }}</ng-container>
-        </ng-template>
       </td>
     </ng-container>
 

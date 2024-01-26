@@ -5,8 +5,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { AuthService } from '../shared/auth.service';
-import { UsersService } from '../shared/users.service';
-import { TeachersService } from '../shared/teachers.service';
 import { StudentsService } from '../shared/students.service';
 import { RenderedService } from '../shared/rendered.service';
 import { SubjectsService } from '../shared/subjects.service';
@@ -47,6 +45,7 @@ export class AssignmentsComponent implements OnInit {
   selectedMatiere: string = '';
   selectedStatus: string = 'all';
   matiereIdMap: Record<string, string> = {}; //https://www.danywalls.com/how-to-use-record-type-in-typescript
+  nbStudent: Record<string, number> = {}; // Clé pourrait être 'Promo-GroupeTD'
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
@@ -79,10 +78,21 @@ export class AssignmentsComponent implements OnInit {
     this.getLogin = this.authService.getUsers?.login ?? '';
     console.log("La personne loggué est : " + this.getLogin);
 
+    if (this.isAdmin()) {
+      this.studentsService.getStudents().subscribe(students => {
+        students.forEach((student: { promo: any; groupe: any; }) => {
+          const key = `${student.promo}-${student.groupe}`;
+          this.nbStudent[key] = (this.nbStudent[key] || 0) + 1;
+        });
+
+        console.log("Nombre d'étudiants par groupe et promo:", this.nbStudent);
+      });
+    }
+
     this.subjectService.getSubjects().subscribe({
       next: (subjects) => {
         this.matieres = subjects.docs.map((subject: Subject) => subject.matiere);
-        
+
         subjects.docs.forEach((subject: Subject) => {
           this.matiereIdMap[subject.matiere] = subject._id as string;
         });
@@ -133,7 +143,7 @@ export class AssignmentsComponent implements OnInit {
                     }, error => {
                       console.error(`Erreur lors de la récupération du render pour l'assignment ${assignment._id}: `, error);
                     });
-                    
+
 
                 }
               });
@@ -182,7 +192,6 @@ export class AssignmentsComponent implements OnInit {
       error: (error) => console.error("Erreur lors du chargement des renders: ", error)
     });
   }
-
 
   isAssignmentRendered(assignmentId: string | undefined): boolean {
     if (assignmentId === undefined) {
@@ -238,11 +247,11 @@ export class AssignmentsComponent implements OnInit {
   }
 
   toggleRendered(event: MatSlideToggleChange) {
-    this.isRendered = event.checked ? true : null; 
+    this.isRendered = event.checked ? true : null;
     this.filterAssignments();
   }
-  
-  
+
+
   filterAssignments() {
     let results = this.assignments;
 
@@ -259,22 +268,22 @@ export class AssignmentsComponent implements OnInit {
       results = results.filter(assignment => !assignment.note);
     }
     if (this.isRendered === true) {
-      results = results.filter(assignment => 
+      results = results.filter(assignment =>
         assignment._id && this.rendersMap.get(assignment._id) === true
       );
     }
-  
+
     if (this.searchText && this.searchText.trim() !== '') {
-      results = results.filter(assignment => 
+      results = results.filter(assignment =>
         assignment.nom.toLowerCase().includes(this.searchText.toLowerCase())
       );
     }
 
-    
-  
+
+
     this.filteredAssignments = results;
   }
-  
+
   onSearchKeyup(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.applyFilter(input.value);
@@ -291,14 +300,20 @@ export class AssignmentsComponent implements OnInit {
     console.log("Matière sélectionnée bitch:", this.selectedMatiere);
     this.filterAssignments();
   }
-  
-  
+
+
   onStatusChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.selectedStatus = select.value;
     this.filterAssignments();
   }
-  
+
+  getTotalStudents(groupe: string, promo: string): number {
+    const key = `${promo}-${groupe}`;
+    return this.nbStudent[key] || 0;
+  }
+
+
   onFirstPage() {
     if (this.page > 1) {
       this.page = 1;

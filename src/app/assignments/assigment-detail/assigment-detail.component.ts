@@ -34,7 +34,7 @@ export class AssigmentDetailComponent implements OnInit {
 
   onAssignmentRendu() {
     if (this.assignmentTransmis) {
-      this.assignmentTransmis.rendu = true;
+      //this.assignmentTransmis.rendu = true;
     }
 
     this.assignmentsService.updateAssignment(this.assignmentTransmis!)

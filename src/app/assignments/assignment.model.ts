@@ -3,7 +3,7 @@ export class Assignment {
     id!: number;
     nom!: string;
     dateDeRendu!: Date;
-    rendu!: boolean;
+    rendu!: number;
     note!: number | null;
     remarques!: string | null;
     auteur!: string | null; //car ref object id dans mongoDB

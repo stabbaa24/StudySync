@@ -16,7 +16,7 @@
                 </mat-error>
             </mat-form-field>
         </p>
-        
+
         <p>
             <mat-form-field appearance="outline">
                 <mat-label>Prénom</mat-label>
@@ -27,15 +27,27 @@
             </mat-form-field>
         </p>
         <p *ngIf="registerForm.value.role === 'user'">
-            <mat-form-field appearance="outline">
+
+            <mat-form-field>
                 <mat-label>Promo</mat-label>
-                <input matInput formControlName="promo" placeholder="Promotion">
+                <mat-select formControlName="promo" placeholder="Choisir une promo">
+                    <mat-option value="L3">L3</mat-option>
+                    <mat-option value="M1">M1</mat-option>
+                    <mat-option value="M2">M2</mat-option>
+                </mat-select>
             </mat-form-field>
-        
-            <mat-form-field appearance="outline">
+
+            <mat-form-field>
                 <mat-label>Groupe de TD</mat-label>
-                <input matInput formControlName="groupe" placeholder="Groupe de TD">
+                <mat-select formControlName="groupe" placeholder="Choisir un groupe">
+                    <mat-option value="TD 1">TD 1</mat-option>
+                    <mat-option value="TD 2">TD 2</mat-option>
+                    <mat-option value="TD 3">TD 3</mat-option>
+                </mat-select>
             </mat-form-field>
+
+           
+
         </p>
         <p>
             <input type="file" name="image" (change)="onFileSelected($event)" />
