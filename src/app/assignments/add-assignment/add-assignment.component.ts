@@ -3,6 +3,7 @@ import { Assignment } from '../assignment.model';
 import { AssignmentsService } from '../../shared/assignments.service';
 import { SubjectsService } from '../../shared/subjects.service';
 import { Subject } from 'src/app/subjects/subject.model';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-assignment',
@@ -22,6 +23,7 @@ export class AddAssignmentComponent implements OnInit {
   subjects!: Subject[];
 
   constructor(
+    private dialogRef: MatDialogRef<AddAssignmentComponent>,
     private assignmentsService: AssignmentsService,
     private subjectService: SubjectsService
   ) { }
@@ -49,6 +51,9 @@ export class AddAssignmentComponent implements OnInit {
     newAssignment.auteur = this.auteur;
     newAssignment.matiere = this.matiere;
     this.assignmentsService.addAssignment(newAssignment)
-      .subscribe(message => console.log(message));
+    .subscribe(message => {
+      console.log(message);
+      this.dialogRef.close(); 
+    });
   }
 }

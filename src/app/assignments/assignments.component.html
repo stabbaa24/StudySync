@@ -17,26 +17,25 @@
   </div>
 
   <div *ngIf="isAdmin()" class="ajouterBtn">
-    <a routerLink="/add">
-      <button class="ajouterBtn" mat-flat-button color="accent">
-        Ajouter Assignment
-      </button>
-    </a>
+    <button class="ajouterBtn" mat-flat-button color="accent" (click)="openAddAssignmentDialog()">
+      Ajouter Assignment
+    </button>
   </div>
 
   <mat-slide-toggle (change)="toggleRendered($event)">Afficher uniquement les devoirs rendus</mat-slide-toggle>
   <input matInput (keyup)="onSearchKeyup($event)" placeholder="Rechercher un assignment">
-  <select (change)="onMatiereChange($event)">
+  
+  <select *ngIf="!isAdmin()" (change)="onMatiereChange($event)">
     <option value="">Toutes les matières</option>
     <option *ngFor="let matiere of matieres" [value]="matiere">{{ matiere }}</option>
   </select>
   
-  <!-- Filtre pour les devoirs (notés/non notés) -->
   <select (change)="onStatusChange($event)">
     <option value="all">Tous les devoirs</option>
     <option value="noted">Devoirs notés</option>
     <option value="unnoted">Devoirs non notés</option>
   </select>
+
   <table mat-table [dataSource]="filteredAssignments" multiTemplateDataRows class="mat-elevation-z8">
     <!-- Colonnes de Tableau -->
     <ng-container *ngFor="let column of columnsToDisplay">
@@ -99,7 +98,7 @@
   
               
             <div *ngIf="isAdmin()">
-              <button mat-button color="primary" (click)="onClickEdit(assignment)">Éditer
+              <button mat-button color="primary" (click)="openEditAssignmentDialog(assignment)">Éditer
                 <mat-icon>edit</mat-icon>
               </button>
               <button mat-button color="warn" (click)="onAssignmentDelete(assignment)">Supprimer

@@ -45,6 +45,8 @@ import { AddSubjectComponent } from './subjects/add-subject/add-subject.componen
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { MatDialogModule } from '@angular/material/dialog';
+import { StudentCardsComponent } from './student-cards/student-cards.component';
 
 const routes: Routes = [
   //{ path: 'load', component: LoadComponent },
@@ -77,7 +79,8 @@ const routes: Routes = [
     LoadComponent,
     RegisterComponent,
     SubjectsComponent,
-    AddSubjectComponent
+    AddSubjectComponent,
+    StudentCardsComponent
   ],
   imports: [
     BrowserModule,
@@ -104,7 +107,8 @@ const routes: Routes = [
     MatRadioModule,
     MatTableModule,
     MatSortModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDialogModule
   ],
   providers: [
     {

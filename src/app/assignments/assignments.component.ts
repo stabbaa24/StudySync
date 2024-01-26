@@ -12,6 +12,9 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { catchError, forkJoin, map, of, tap } from 'rxjs';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Subject } from '../subjects/subject.model'
+import { MatDialog } from '@angular/material/dialog';
+import { AddAssignmentComponent } from './add-assignment/add-assignment.component';
+import { EditAssignmentComponent } from './edit-assignment/edit-assignment.component';
 
 @Component({
   selector: 'app-assignments',
@@ -66,6 +69,7 @@ export class AssignmentsComponent implements OnInit {
   nextPageInUrl!: number;
 
   constructor(
+    private dialog: MatDialog,
     private assignmentsService: AssignmentsService,
     private router: Router,
     private authService: AuthService,
@@ -313,6 +317,32 @@ export class AssignmentsComponent implements OnInit {
     return this.nbStudent[key] || 0;
   }
 
+  openAddAssignmentDialog(): void {
+    const dialogRef = this.dialog.open(AddAssignmentComponent, {
+      width: '400px',
+      
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(' pop up fermé');
+      this.loadPageData();
+    });
+  }
+
+  openEditAssignmentDialog(assignment: Assignment): void {
+    const dialogRef = this.dialog.open(EditAssignmentComponent, {
+      width: '400px',
+      data: { assignmentId: assignment.id } 
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Fenêtre modale fermée');
+      this.loadPageData();
+    });
+  }
+  
+  
+  
 
   onFirstPage() {
     if (this.page > 1) {
