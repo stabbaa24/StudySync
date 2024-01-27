@@ -1,108 +1,79 @@
-.rendu {
-    color: green;
-}
-
-.nonRendu {
-    color: red;
-}
-
-.mat-divider {
-    border-top-color: red;
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  background-color: #f4f4f6;
 }
 
 .container {
-    display: flex;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Search and Filter Area */
+.search-filter-area {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-filter-area input, .search-filter-area select {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th {
+  background-color: #0056b3;
+  color: white;
+  padding: 10px;
+}
+
+table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Pagination and Toggle */
+.pagination-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+/* Add Assignment Button */
+.add-assignment-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.add-assignment-btn:hover {
+  background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-filter-area {
     flex-direction: column;
-}
-
-.ajouterBtn {
-    align-self: flex-end;
-}
-
-/* Style général pour le conteneur de pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    /* Ajustez pour aligner à droite */
-    align-items: center;
-    margin: 20px 0;
-    /* Ajustez selon l'espacement désiré */
-}
-
-/* Style pour les boutons de première/dernière page pour qu'ils ressemblent à ceux de mat-paginator */
-.mat-icon-button {
-    border: none;
-    background-color: transparent;
-}
-
-/* Style pour les icônes des boutons de première/dernière page */
-.mat-icon-button .mat-icon {
-    color: rgba(0, 0, 0, 0.54);
-}
-
-/* Style pour les boutons désactivés */
-.mat-icon-button[disabled] {
-    color: rgba(0, 0, 0, 0.26);
-}
-
-/* Style pour le mat-paginator */
-.mat-paginator {
-    background-color: transparent;
-    /* Enlève le fond par défaut si nécessaire */
-}
-
-/* Style pour la partie range actions du mat-paginator */
-.mat-paginator-range-actions {
-    align-items: center;
-    /* Centre verticalement le texte et les contrôles */
-}
-
-/* Style pour la partie range label du mat-paginator */
-.mat-paginator-range-label {
-    margin: 0 8px;
-    /* Ajustez l'espacement autour du texte de la plage */
-}
-
-.assignment-details {
-    padding: 10px;
-    background-color: #f5f5f5;
-    border-top: 1px solid #e0e0e0;
+    align-items: flex-start;
   }
 
-
-  table {
+  .search-filter-area input, .search-filter-area select {
+    margin-bottom: 10px;
     width: 100%;
   }
-  
-  tr.example-detail-row {
-    height: 0;
-  }
-  
-  tr.example-element-row:not(.example-expanded-row):hover {
-    background: whitesmoke;
-  }
-  
-  tr.example-element-row:not(.example-expanded-row):active {
-    background: #efefef;
-  }
-  
-  .example-element-row td {
-    border-bottom-width: 0;
-  }
-  
-  .example-element-detail {
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background-color: #f5f5f5;
-    border-top: 1px solid #e0e0e0;
-  }
-  
-  .example-element-description {
-    padding: 16px;
-  }
-  
-  .example-element-description-attribution {
-    opacity: 0.5;
-  }
-  
+}

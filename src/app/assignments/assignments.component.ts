@@ -137,6 +137,7 @@ export class AssignmentsComponent implements OnInit {
             this.rendered = results.flat().filter(render => render !== null);
             this.filterAssignments();
           });
+
           this.filteredAssignments = [...this.assignments];
         }
 
@@ -256,7 +257,7 @@ export class AssignmentsComponent implements OnInit {
   }
 
   filterAssignments() {
-    let assignmentRes = this.assignments;
+    let assignmentRes = [...this.assignments]; // Copie du tableau car sinon on a un pb
 
     if (this.selectedMatiere) {
       const matiereId = this.matiereIdMap[this.selectedMatiere];
@@ -298,14 +299,11 @@ export class AssignmentsComponent implements OnInit {
       }
     }
 
-
     if (this.searchText && this.searchText.trim() !== '') {
       assignmentRes = assignmentRes.filter(assignment =>
         assignment.nom.toLowerCase().includes(this.searchText.toLowerCase())
       );
     }
-
-
 
     this.filteredAssignments = assignmentRes;
   }
@@ -324,13 +322,20 @@ export class AssignmentsComponent implements OnInit {
     this.filterAssignments();
   }
 
+  applyPagination() {
+    const startIndex = (this.page - 1) * this.limit;
+    const endIndex = startIndex + this.limit;
+    this.filteredAssignments = this.assignments.slice(startIndex, endIndex);
+  }
+  
+
   onMatiereChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.selectedMatiere = select.value;
     console.log("Matière sélectionnée bitch:", this.selectedMatiere);
     this.filterAssignments();
+    this.applyPagination();
   }
-
 
   onStatusChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
@@ -388,5 +393,6 @@ export class AssignmentsComponent implements OnInit {
     this.page = event.pageIndex + 1;
     this.limit = event.pageSize;
     this.loadPageData();
+    this.applyPagination();
   }
 }

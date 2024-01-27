@@ -48,7 +48,6 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
 import { StudentCardsComponent } from './student-cards/student-cards.component';
 import { TeacherCardsComponent } from './teacher-cards/teacher-cards.component';
-import { RenderAssignmentComponent } from './assignments/render-assignment/render-assignment.component';
 import { AssignmentCalendarComponent } from './assignments/assignment-calendar/assignment-calendar.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
@@ -71,7 +70,6 @@ const routes: Routes = [
   { path: 'addSubject', component: AddSubjectComponent },
   { path: 'students', component: StudentCardsComponent },
   { path: 'teachers', component: TeacherCardsComponent },
-  { path: 'renderAssignment', component: RenderAssignmentComponent },
   { path: 'calendar', component: AssignmentCalendarComponent }
 ];
 
@@ -91,7 +89,6 @@ const routes: Routes = [
     AddSubjectComponent,
     StudentCardsComponent,
     TeacherCardsComponent,
-    RenderAssignmentComponent,
     AssignmentCalendarComponent
   ],
   imports: [

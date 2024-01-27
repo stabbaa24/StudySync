@@ -45,10 +45,6 @@ export class AssignmentsService {
     return this.http.delete(deleteURI);
   }
 
-  getAssignmentsByProfessor(professorId: string): Observable<Assignment[]> {
-    return this.http.get<Assignment[]>(`${this.url}/professor/${professorId}`);
-  }
-  
   /*peuplerBD() {
     bdInitialAssignments.forEach(a => {
       let nouvelAssignment = new Assignment();
