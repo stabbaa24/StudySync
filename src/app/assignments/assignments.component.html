@@ -62,7 +62,7 @@
           {{ assignment.rendu }} / {{ getTotalStudents(assignment.groupe, assignment.promo) }}
         </ng-container>
         <ng-container *ngIf="!isAdmin()">
-          {{ assignment.rendu ? 'Rendu' : 'Non rendu' }}
+          {{ isAssignmentRendered(assignment._id) ? 'Rendu' : 'Non rendu' }}
         </ng-container>
       </td>
     </ng-container>
@@ -79,20 +79,22 @@
             <img [src]="assignment.matiereDetails?.professeurDetails?.image" alt="Image du professeur"
               style="width: 100px;">
 
-            <ng-container *ngIf="getRenderForAssignment(assignment._id); else notRendered">
-              <p>Note : {{ getRenderForAssignment(assignment._id)?.note }}</p>
-              <p>Remarque : {{ getRenderForAssignment(assignment._id)?.remarques }}</p>
-            </ng-container>
-            <ng-template #notRendered>
-              <div *ngIf="!isAdmin() && !isAssignmentRendered(assignment._id)">
-                <p>Assignment n° : {{ assignment._id }}</p>
-                <p>Devoir non rendu.</p>
-                <mat-checkbox (click)="onChangeAssignmentRendu(assignment, $event)">
-                  Marquer comme rendu
-                </mat-checkbox>
-              </div>
-            </ng-template>
-
+              <ng-container *ngIf="!isAdmin()">
+                <ng-container *ngIf="getRenderForAssignment(assignment._id); else notRendered">
+                  <p>Note : {{ getRenderForAssignment(assignment._id)?.note }}</p>
+                  <p>Remarque : {{ getRenderForAssignment(assignment._id)?.remarques }}</p>
+                </ng-container>
+                <ng-template #notRendered>
+                  <div *ngIf="!isAssignmentRendered(assignment._id)">
+                    <p>Assignment n° : {{ assignment._id }}</p>
+                    <p>Devoir non rendu.</p>
+                    <mat-checkbox (click)="onChangeAssignmentRendu(assignment, $event)">
+                      Marquer comme rendu
+                    </mat-checkbox>
+                  </div>
+                </ng-template>
+              </ng-container>
+              
 
             <div *ngIf="isAdmin()">
               <button mat-button color="primary" (click)="openEditAssignmentDialog(assignment)">Éditer

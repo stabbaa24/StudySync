@@ -231,7 +231,6 @@ export class AssignmentsComponent implements OnInit {
       { queryParams: { nom: this.assignmentTransmis?.nom }, fragment: 'edition' });
   }
 
-
   onChangeAssignmentRendu(assignment: Assignment, $event: any) {
     console.log("Dans onChangeAssignmentRendu");
     console.log(assignment);
@@ -246,6 +245,7 @@ export class AssignmentsComponent implements OnInit {
 
       this.renderedService.addRendered(render).subscribe(message => {
         console.log(message);
+        this.loadPageData();
       });
     }
   }
@@ -254,7 +254,6 @@ export class AssignmentsComponent implements OnInit {
     this.isRendered = event.checked ? true : null;
     this.filterAssignments();
   }
-
 
   filterAssignments() {
     let assignmentRes = this.assignments;
@@ -270,7 +269,7 @@ export class AssignmentsComponent implements OnInit {
       if (this.isAdmin()) {
         assignmentRes = assignmentRes.filter(assignment => {
           const renders = this.rendered.filter(r => r.assignment === assignment._id);
-          return renders.some(render => render.note !== null && render.note !== 0);
+          return renders.some(render => render.note !== null);
         });
       }
       else {
@@ -279,7 +278,7 @@ export class AssignmentsComponent implements OnInit {
 
           const render = this.rendered.find(r => r.assignment === assignment._id);
           console.log("render", render);
-          return render && render.note !== null && render.note !== 0;
+          return render && render.note !== null
         });
       }
     }
