@@ -24,4 +24,8 @@ export class RenderedService {
     addRendered(rendered: any): Observable<any> {
         return this.http.post<any>(this.url, rendered);
     }
+
+    getRendersByAssignment(assignmentId: string): Observable<any[]> {
+        return this.http.get<any[]>(`${this.url}/assignment/${assignmentId}`);
+    }
 }

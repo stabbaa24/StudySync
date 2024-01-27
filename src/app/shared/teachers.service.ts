@@ -27,5 +27,9 @@ export class TeachersService {
         formData.append('image', file, file.name);
         return this.http.post(this.url +'/uploads', formData);
     }
+
+    getTeacherLogin(login: string): Observable<any> {
+        return this.http.get<any>(`${this.url}/login/${login}`);
+    }
     
 }

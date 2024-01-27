@@ -1,0 +1,106 @@
+/* Surcharge du calendrier dans le fichier CSS du composant avec encapsulation de la vue */
+:host ::ng-deep {
+
+    /* Style général pour le calendrier */
+    .cal-month-view {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+  
+    /* Style pour les jours du calendrier */
+    .cal-day-cell {
+      height: auto;
+      padding: 12px;
+      border-right: 1px solid #e8e8e8;
+      border-bottom: 1px solid #e8e8e8;
+      overflow: hidden;
+    }
+  
+    /* Style pour le jour sélectionné ou aujourd'hui */
+    .cal-day-cell.cal-day-selected,
+    .cal-day-cell.cal-today {
+      background-color: #f0f8ff;
+      color: #1e90ff;
+      border: none;
+    }
+  
+    /* Style pour les événements dans un jour */
+    .cal-event {
+      font-size: 0.85em;
+      margin-bottom: 4px;
+      padding: 6px;
+      border-radius: 4px;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    /* Couleur de fond pour les événements */
+    .cal-event,
+    .cal-event:hover {
+      background-color: #1e90ff;
+      color: white;
+    }
+  
+    /* Style pour les titres des jours de la semaine */
+    .cal-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e8e8e8;
+      color: #333;
+    }
+  
+    /* Style pour le titre du calendrier (mois et année) */
+    .cal-header .mwl-calendar-header {
+      padding: 10px;
+      background-color: #f7f7f7;
+      border-bottom: none;
+      font-size: 1.2em;
+      color: #333;
+    }
+  
+    /* Style pour les boutons de navigation du calendrier */
+    .cal-header button {
+      margin: 0 10px;
+      background-color: transparent;
+      color: #1e90ff;
+      border: 1px solid #1e90ff;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+  
+    /* Hover effect for buttons */
+    .cal-header button:hover {
+      background-color: #1e90ff;
+      color: white;
+    }
+  
+    /* Style pour le bouton aujourd'hui */
+    .cal-today-button {
+      background-color: #1e90ff;
+      border-color: #1e90ff;
+      color: white;
+    }
+  
+    /* Style pour les jours fériés ou les événements spéciaux */
+    .cal-day-cell.cal-weekend {
+      background-color: #fff0f0;
+    }
+  
+    /* Style pour les événements qui durent toute la journée */
+    .cal-all-day-events {
+      min-height: 50px;
+      padding: 8px;
+    }
+  
+    /* Style pour les cellules sans événements */
+    .cal-day-cell.cal-in-month.cal-day-has-events {
+      background-color: #f9f9f9;
+    }
+  
+    /* Ajouter des styles supplémentaires si nécessaire... */
+  }
+  

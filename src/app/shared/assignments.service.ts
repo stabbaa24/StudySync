@@ -23,11 +23,6 @@ export class AssignmentsService {
     return this.http.get<Assignment[]>(this.url); // renvoie un Observable
   }
 
-  // renvoie comme Observable l'assignment dont l'id est passé
-  // en paramètre, ou undefined s'il n'existe pas
-  /*getAssignment(id: number): Observable<Assignment | undefined> {
-    return this.http.get<Assignment>(this.url + "/" + id);
-  }*/
 
   getAssignment(id: number): Observable<Assignment | undefined> {
     // Assurez-vous que l'URL est correctement formée et que 'id' n'est pas undefined
@@ -35,7 +30,7 @@ export class AssignmentsService {
     console.log('Appel API avec URL:', url);
     return this.http.get<Assignment>(url);
   }
-  
+
 
   addAssignment(assignment: Assignment): Observable<any> {
     return this.http.post<Assignment>(this.url, assignment);
@@ -48,9 +43,12 @@ export class AssignmentsService {
   deleteAssignment(assignment: Assignment): Observable<any> {
     const deleteURI = this.url + "/" + assignment._id; // Assurez-vous que _id est correct
     return this.http.delete(deleteURI);
-}
+  }
 
-
+  getAssignmentsByProfessor(professorId: string): Observable<Assignment[]> {
+    return this.http.get<Assignment[]>(`${this.url}/professor/${professorId}`);
+  }
+  
   /*peuplerBD() {
     bdInitialAssignments.forEach(a => {
       let nouvelAssignment = new Assignment();

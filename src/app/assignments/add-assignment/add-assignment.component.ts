@@ -4,6 +4,8 @@ import { AssignmentsService } from '../../shared/assignments.service';
 import { SubjectsService } from '../../shared/subjects.service';
 import { Subject } from 'src/app/subjects/subject.model';
 import { MatDialogRef } from '@angular/material/dialog';
+import { AuthService } from 'src/app/shared/auth.service';
+import { TeachersService } from 'src/app/shared/teachers.service';
 
 @Component({
   selector: 'app-add-assignment',
@@ -21,14 +23,27 @@ export class AddAssignmentComponent implements OnInit {
   remarques = null;
   auteur = null;
   subjects!: Subject[];
-
+  getLogin!: string;
+  
   constructor(
     private dialogRef: MatDialogRef<AddAssignmentComponent>,
     private assignmentsService: AssignmentsService,
-    private subjectService: SubjectsService
+    private subjectService: SubjectsService,
+    private authService: AuthService,
+    private teachersService: TeachersService
   ) { }
 
   ngOnInit() {
+    this.getLogin = this.authService.getUsers?.login ?? '';
+    console.log("Login récupéré:", this.getLogin);
+    this.teachersService.getTeacherLogin(this.getLogin).subscribe(teacher => {
+      if (teacher) {
+        this.auteur = teacher._id;
+        console.log("Professeur trouvé pour le login :", this.getLogin);
+      } else {
+        console.error("Professeur non trouvé pour le login :", this.getLogin);
+      }
+    });
     this.subjectService.getSubjects().subscribe({
       next: (subjects) => {
         this.subjects = subjects.docs; 
@@ -47,6 +62,7 @@ export class AddAssignmentComponent implements OnInit {
     newAssignment.groupe = this.groupe as "TD 1" | "T2" | "TD3";
     newAssignment.promo = this.promo as "L3" | "M1" | "M2";
     newAssignment.auteur = this.auteur;
+    console.log("Auteur:", newAssignment.auteur);
     newAssignment.matiere = this.matiere;
     this.assignmentsService.addAssignment(newAssignment)
     .subscribe(message => {
