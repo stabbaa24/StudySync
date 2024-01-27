@@ -1,1 +1,27 @@
-<p>student-cards works!</p>
+<input matInput (keyup)="onSearchNomChange($event)" placeholder="Rechercher par nom">
+<input matInput (keyup)="onSearchPrenomChange($event)" placeholder="Rechercher par prénom">
+
+<select (change)="onPromoChange($event)">
+  <option value="">Toutes les promos</option>
+  <option value="L3">L3</option>
+  <option value="M1">M1</option>
+  <option value="M2">M2</option>
+</select>
+
+<select (change)="onGroupeChange($event)">
+  <option value="">Tous les groupes</option>
+  <option value="TD 1">TD 1</option>
+  <option value="TD 2">TD 2</option>
+  <option value="TD 3">TD 3</option>
+</select>
+
+<div *ngFor="let student of filteredStudents">
+  <mat-card class="example-card">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>{{ student.prenom }} {{ student.nom }}</mat-card-title>
+      <mat-card-subtitle>{{ student.promo }} - {{ student.groupe }}</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image [src]="student.image" alt="Photo de l'étudiant">
+  </mat-card>
+</div>

@@ -9,12 +9,13 @@ import { StudentsService } from '../shared/students.service';
 import { RenderedService } from '../shared/rendered.service';
 import { SubjectsService } from '../shared/subjects.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { catchError, forkJoin, map, of, tap } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Subject } from '../subjects/subject.model'
 import { MatDialog } from '@angular/material/dialog';
 import { AddAssignmentComponent } from './add-assignment/add-assignment.component';
 import { EditAssignmentComponent } from './edit-assignment/edit-assignment.component';
+import { Render } from './render.model';
 
 @Component({
   selector: 'app-assignments',
@@ -39,6 +40,7 @@ export class AssignmentsComponent implements OnInit {
   getLogin: string = '';
   groupeEtudiant: string = '';
   promoEtudiant: string = '';
+  rendered: Render[] = [];
   isRendered: boolean | null = null;
   matieres: string[] = [];
   loadingRenders = true;
@@ -67,6 +69,7 @@ export class AssignmentsComponent implements OnInit {
   hasNextPageInUrl!: boolean;
   prevPageInUrl!: number;
   nextPageInUrl!: number;
+
 
   constructor(
     private dialog: MatDialog,
@@ -121,6 +124,19 @@ export class AssignmentsComponent implements OnInit {
             return getTeacherLog === this.getLogin;
           });
 
+          const renderRequests = this.assignments.map(assignment => {
+            if (assignment._id) {
+              return this.renderedService.getRendersForTeacher(assignment._id);
+            } else {
+              return of(null);
+            }
+          });
+
+          //https://rxjs.dev/api/index/function/forkJoin
+          forkJoin(renderRequests).subscribe(results => {
+            this.rendered = results.flat().filter(render => render !== null);
+            this.filterAssignments();
+          });
           this.filteredAssignments = [...this.assignments];
         }
 
@@ -142,20 +158,26 @@ export class AssignmentsComponent implements OnInit {
                 if (assignment._id) {
                   this.renderedService.getRendered(assignment._id, this.getLogin)
                     .subscribe(render => {
-                      if (assignment._id === undefined) throw new Error("assignment._id est undefined");
-                      this.rendersMap.set(assignment._id, render.estRendu);
+                      if (render) {
+                        if (render.rendu && assignment._id) {
+                          this.rendersMap.set(assignment._id, render.rendu);
+                        }
+                        this.rendered.push(render);
+                        console.log("render", render);
+                      } else {
+                        console.log(`Aucun rendu pour : ${assignment._id}`);
+                      }
                     }, error => {
-                      console.error(`Erreur lors de la récupération du render pour l'assignment ${assignment._id}: `, error);
+                      console.error(`Erreur lors de la récupération du rendu pour l'assignment ${assignment._id}: `, error);
                     });
-
-
                 }
               });
+
               this.filteredAssignments = [...this.assignments];
             }
           });
         }
-        this.loadRenders();
+        console.log("appel de loadRenders")
 
         this.totalDocs = data.totalDocs;
         this.totalPages = data.totalPages;
@@ -173,28 +195,6 @@ export class AssignmentsComponent implements OnInit {
           this.paginator.pageIndex = this.page - 1;
         }
       });
-  }
-
-  loadRenders(): void {
-    this.loadingRenders = true;
-    let renderRequests = this.assignments
-      .filter(assignment => assignment._id !== undefined)
-      .map(assignment => {
-        if (assignment._id === undefined) throw new Error("assignment._id est undefined");
-        return this.renderedService.getRendered(assignment._id, this.getLogin)
-          .pipe(
-            catchError(() => of({ rendu: false })),
-            tap(render => {
-              if (assignment._id === undefined) throw new Error("assignment._id est undefined");
-              this.rendersMap.set(assignment._id, render.rendu);
-            })
-          );
-      });
-
-    forkJoin(renderRequests).subscribe({
-      next: () => this.loadingRenders = false,
-      error: (error) => console.error("Erreur lors du chargement des renders: ", error)
-    });
   }
 
   isAssignmentRendered(assignmentId: string | undefined): boolean {
@@ -257,35 +257,62 @@ export class AssignmentsComponent implements OnInit {
 
 
   filterAssignments() {
-    let results = this.assignments;
+    let assignmentRes = this.assignments;
 
     if (this.selectedMatiere) {
       const matiereId = this.matiereIdMap[this.selectedMatiere];
-      results = results.filter(assignment => {
+      assignmentRes = assignmentRes.filter(assignment => {
         return assignment.matiere === matiereId;
       });
     }
 
-    if (this.selectedStatus === 'noted') {
-      results = results.filter(assignment => assignment.note);
-    } else if (this.selectedStatus === 'unnoted') {
-      results = results.filter(assignment => !assignment.note);
-    }
-    if (this.isRendered === true) {
-      results = results.filter(assignment =>
-        assignment._id && this.rendersMap.get(assignment._id) === true
-      );
+    if (this.selectedStatus === 'note') {
+      if (this.isAdmin()) {
+        assignmentRes = assignmentRes.filter(assignment => {
+          const renders = this.rendered.filter(r => r.assignment === assignment._id);
+          return renders.some(render => render.note !== null && render.note !== 0);
+        });
+      }
+      else {
+        console.log("Dans selectedStatus");
+        assignmentRes = assignmentRes.filter(assignment => {
+
+          const render = this.rendered.find(r => r.assignment === assignment._id);
+          console.log("render", render);
+          return render && render.note !== null && render.note !== 0;
+        });
+      }
     }
 
+
+    if (this.isRendered !== null) {
+      if (this.isAdmin()) {
+        assignmentRes = assignmentRes.filter(assignment => {
+          const renders = this.rendered.filter(r => r.assignment === assignment._id);
+          return this.isRendered ? renders.length > 0 : renders.length === 0;
+        });
+      } else {
+        assignmentRes = assignmentRes.filter(assignment => {
+          const render = assignment._id && this.rendersMap.get(assignment._id);
+          return this.isRendered ? render : !render;
+        });
+      }
+    }
+
+
     if (this.searchText && this.searchText.trim() !== '') {
-      results = results.filter(assignment =>
+      assignmentRes = assignmentRes.filter(assignment =>
         assignment.nom.toLowerCase().includes(this.searchText.toLowerCase())
       );
     }
 
 
 
-    this.filteredAssignments = results;
+    this.filteredAssignments = assignmentRes;
+  }
+
+  getRenderForAssignment(assignmentId: string): Render | undefined {
+    return this.rendered.find(r => r.assignment === assignmentId);
   }
 
   onSearchKeyup(event: Event): void {
@@ -320,9 +347,9 @@ export class AssignmentsComponent implements OnInit {
   openAddAssignmentDialog(): void {
     const dialogRef = this.dialog.open(AddAssignmentComponent, {
       width: '400px',
-      
+
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       console.log(' pop up fermé');
       this.loadPageData();
@@ -332,17 +359,17 @@ export class AssignmentsComponent implements OnInit {
   openEditAssignmentDialog(assignment: Assignment): void {
     const dialogRef = this.dialog.open(EditAssignmentComponent, {
       width: '400px',
-      data: { assignmentId: assignment.id } 
+      data: { assignmentId: assignment.id }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       console.log('Fenêtre modale fermée');
       this.loadPageData();
     });
   }
-  
-  
-  
+
+
+
 
   onFirstPage() {
     if (this.page > 1) {

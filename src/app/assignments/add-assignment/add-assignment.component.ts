@@ -46,8 +46,6 @@ export class AddAssignmentComponent implements OnInit {
     newAssignment.rendu = 0;
     newAssignment.groupe = this.groupe as "TD 1" | "T2" | "TD3";
     newAssignment.promo = this.promo as "L3" | "M1" | "M2";
-    newAssignment.note = this.note;
-    newAssignment.remarques = this.remarques;
     newAssignment.auteur = this.auteur;
     newAssignment.matiere = this.matiere;
     this.assignmentsService.addAssignment(newAssignment)

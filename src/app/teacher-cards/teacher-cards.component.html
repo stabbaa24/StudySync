@@ -1,0 +1,18 @@
+<input matInput (keyup)="onSearchNomChange($event)" placeholder="Rechercher par nom">
+<input matInput (keyup)="onSearchPrenomChange($event)" placeholder="Rechercher par prénom">
+<select (change)="onMatiereChange($event)">
+    <option value="">Toutes les matières</option>
+    <option *ngFor="let subject of subjects" [value]="subject.matiere">{{ subject.matiere }}</option>
+</select>
+
+<div *ngFor="let subject of filteredSubjects">
+    <mat-card class="example-card">
+        <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+            <mat-card-title>{{ subject.professeurDetails?.prenom }} {{ subject.professeurDetails?.nom
+                }}</mat-card-title>
+            <mat-card-subtitle>{{ subject.matiere }}</mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image [src]="subject.professeurDetails?.image" alt="Photo de l'enseignant">
+    </mat-card>
+</div>

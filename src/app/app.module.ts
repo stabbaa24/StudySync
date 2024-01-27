@@ -47,6 +47,8 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
 import { StudentCardsComponent } from './student-cards/student-cards.component';
+import { TeacherCardsComponent } from './teacher-cards/teacher-cards.component';
+import { RenderAssignmentComponent } from './assignments/render-assignment/render-assignment.component';
 
 const routes: Routes = [
   //{ path: 'load', component: LoadComponent },
@@ -63,7 +65,9 @@ const routes: Routes = [
   { path: 'loggin', component: FormLogginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'subjects', component: SubjectsComponent },
-  { path: 'addSubject', component: AddSubjectComponent }
+  { path: 'addSubject', component: AddSubjectComponent },
+  { path: 'students', component: StudentCardsComponent },
+  { path: 'teachers', component: TeacherCardsComponent }
 ];
 
 @NgModule({
@@ -80,7 +84,9 @@ const routes: Routes = [
     RegisterComponent,
     SubjectsComponent,
     AddSubjectComponent,
-    StudentCardsComponent
+    StudentCardsComponent,
+    TeacherCardsComponent,
+    RenderAssignmentComponent
   ],
   imports: [
     BrowserModule,

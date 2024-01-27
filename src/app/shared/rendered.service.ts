@@ -15,8 +15,11 @@ export class RenderedService {
 
     getRendered(assignmentId: string, studentLogin: string): Observable<any> {
         return this.http.get<any>(`${this.url}/${assignmentId}/${studentLogin}`);
-      }
+    }
 
+    getRendersForTeacher(assignmentId: string): Observable<any> {
+        return this.http.get<any>(`${this.url}/${assignmentId}`);
+    }
 
     addRendered(rendered: any): Observable<any> {
         return this.http.post<any>(this.url, rendered);

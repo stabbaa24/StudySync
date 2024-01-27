@@ -4,8 +4,6 @@ export class Assignment {
     nom!: string;
     dateDeRendu!: Date;
     rendu!: number;
-    note!: number | null;
-    remarques!: string | null;
     auteur!: string | null; //car ref object id dans mongoDB
     matiere!: string; //same
     groupe!: 'TD 1' | 'T2' | 'TD3';
