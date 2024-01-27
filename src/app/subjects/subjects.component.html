@@ -1,30 +1,24 @@
 <main class="container">
-  <!-- Pagination -->
-  <div class="pagination">
-    <!-- ... Boutons de pagination ... -->
-  </div>
-
-  <div class="ajouterBtn">
+  <div class="ajouterBtnDiv">
     <a routerLink="/addSubject">
-      <button class="ajouterBtn" mat-flat-button color="accent">
+      <button mat-flat-button color="accent" class="ajouterBtn">
         Ajouter Matière
       </button>
     </a>
   </div>
   
-  <mat-list *ngFor="let subject of subjects" class="matList">
-    <nav>
-      <a routerLink="/subject/{{subject._id}}">
-        <h3 mat-subheader>{{ subject.matiere }}</h3>
-        <mat-list-item class="matItem">
-          
-          <img [src]="subject.image_matiere" alt="Image de la matière">
-          <p>Professeur : {{ subject.professeurDetails?.nom }} {{ subject.professeurDetails?.prenom }}</p>
-          <img [src]="subject.professeurDetails?.image" alt="Image du professeur">
-        </mat-list-item>
-        <mat-divider></mat-divider>
-      </a>
-    </nav>
-  </mat-list>
-  
+  <div class="cards-container">
+    <div *ngFor="let subject of subjects" class="example-card">
+      <div class="card-layout">
+        <img [src]="subject.image_matiere" alt="Image de la matière" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">{{ subject.matiere }}</h3>
+          <div class="professor-details">
+            <img [src]="subject.professeurDetails?.image" alt="Image du professeur" class="professor-image">
+            <h4 class="card-subtitle">{{ subject.professeurDetails?.nom }} {{ subject.professeurDetails?.prenom }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>

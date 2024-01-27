@@ -1,18 +1,28 @@
-<input matInput (keyup)="onSearchNomChange($event)" placeholder="Rechercher par nom">
-<input matInput (keyup)="onSearchPrenomChange($event)" placeholder="Rechercher par prénom">
-<select (change)="onMatiereChange($event)">
-    <option value="">Toutes les matières</option>
-    <option *ngFor="let subject of subjects" [value]="subject.matiere">{{ subject.matiere }}</option>
-</select>
+<div class="filter-container">
+    <input matInput (keyup)="onSearchNomChange($event)" placeholder="Rechercher par nom" class="filter-input">
+    <input matInput (keyup)="onSearchPrenomChange($event)" placeholder="Rechercher par prénom" class="filter-input">
+    <select (change)="onMatiereChange($event)" class="filter-select">
+        <option value="">Toutes les matières</option>
+        <option *ngFor="let subject of subjects" [value]="subject.matiere">{{ subject.matiere }}</option>
+    </select>
+</div>
 
-<div *ngFor="let subject of filteredSubjects">
-    <mat-card class="example-card">
-        <mat-card-header>
-            <div mat-card-avatar class="example-header-image"></div>
-            <mat-card-title>{{ subject.professeurDetails?.prenom }} {{ subject.professeurDetails?.nom
-                }}</mat-card-title>
-            <mat-card-subtitle>{{ subject.matiere }}</mat-card-subtitle>
-        </mat-card-header>
-        <img mat-card-image [src]="subject.professeurDetails?.image" alt="Photo de l'enseignant">
-    </mat-card>
+<div class="cards-container">
+    <div *ngFor="let subject of filteredSubjects" class="student-card-wrapper">
+        <mat-card class="example-card">
+            <div class="card-layout">
+                <img mat-card-image [src]="subject.professeurDetails?.image" alt="Photo de l'enseignant"
+                    class="card-image">
+
+                <div class="card-content">
+                    <mat-card-title class="card-title">
+                        {{ subject.professeurDetails?.prenom }} {{ subject.professeurDetails?.nom }}
+                    </mat-card-title>
+                    <mat-card-subtitle class="card-subtitle">
+                        {{ subject.matiere }}
+                    </mat-card-subtitle>
+                </div>
+            </div>
+        </mat-card>
+    </div>
 </div>

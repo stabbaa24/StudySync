@@ -1,19 +1,104 @@
-.matList {
-    display: block;
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.cards-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
     width: 100%;
-    min-height: 50em; /* Hauteur minimale */
-    max-height: 100vh; /* Hauteur maximale avant le défilement */
-    overflow-y: auto; /* Permet le défilement vertical si nécessaire */
-    background-color: antiquewhite;
+    overflow-y: auto;
+    margin-top: 20px;
 }
 
-.matItem {
-    /* Styles supplémentaires pour les items si nécessaire */
-    min-height: 50em; /* Hauteur minimale pour chaque item */
-    background-color: aqua;
+.example-card {
+    flex: 1 0 calc(33.333% - 40px); 
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-img {
-    width: 10%;
-    height: auto;
+.example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-layout {
+    display: flex;
+    width: 100%;
+}
+
+.card-image {
+    width: 20%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    object-fit: cover;
+}
+
+.professor-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; 
+    object-fit: scale-down;
+    margin-right: 20px;
+}
+
+.card-content {
+    padding: 16px;
+    width: calc(100% - 120px); 
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.card-subtitle {
+    font-size: 1rem;
+    color: black;
+    font-weight: 400;
+}
+
+.professor-details {
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    position: relative; 
+    padding: 20px;
+    padding-top: 80px; 
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.ajouterBtnDiv {
+    position: absolute;
+    top: 20px; 
+    right: 20px; 
+}
+
+.ajouterBtn {
+    padding: 10px 20px;
+    border: none; 
+    border-radius: 10px;
+    background-color: #2682be;
+    color: white; 
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.ajouterBtn:hover {
+    background-color: whitesmoke; 
+    color: black;
+    box-shadow: 3px 3px 3px black;
+    border : 1px solid #2682be;
 }

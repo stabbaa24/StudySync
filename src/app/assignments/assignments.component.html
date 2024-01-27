@@ -22,9 +22,12 @@
     </button>
   </div>
 
-  <mat-slide-toggle (change)="toggleRendered($event)">Afficher uniquement les devoirs rendus</mat-slide-toggle>
-  <input matInput (keyup)="onSearchKeyup($event)" placeholder="Rechercher un assignment">
-
+  <div class="slide-toggle">
+    <mat-slide-toggle (change)="toggleRendered($event)">Afficher uniquement les devoirs rendus</mat-slide-toggle>
+    <input matInput (keyup)="onSearchKeyup($event)" placeholder="Rechercher un assignment">
+  
+  </div>
+  
   <select *ngIf="!isAdmin()" (change)="onMatiereChange($event)">
     <option value="">Toutes les matières</option>
     <option *ngFor="let matiere of matieres" [value]="matiere">{{ matiere }}</option>
@@ -73,7 +76,6 @@
           [@detailExpand]="expandedAssignment === assignment ? 'expanded' : 'collapsed'">
           <div class="example-element-description">
 
-            <p>Matière : {{assignment.matiereDetails?.matiere}}</p>
             <img [src]="assignment.matiereDetails?.image_matiere" alt="Image de la matière" style="width: 100px;">
             <p>Professeur : {{assignment.matiereDetails?.professeurDetails?.nom}}</p>
             <img [src]="assignment.matiereDetails?.professeurDetails?.image" alt="Image du professeur"
